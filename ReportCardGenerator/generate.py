@@ -1,20 +1,28 @@
-from geopy.geocoders import Nominatim
-from geopy.distance import vincenty
-from data import *
+from geopy.distance import great_circle
 import pandas as pd
 
-geolocator = Nominatim()
+school_database = pd.read_csv('database.csv')
 
-def find_schools_in_radius(location,radius):
-	current_location = geolocator.geocode(location)
+def find_schools_in_radius(coordinates,radius):
+	#current_location = geolocator.geocode(location)
+	#current_coordinates = (current_location.latitude,current_location.longitude)
+
 	names=[]
-	for school in school_database['school_name']:
-		school_data = school_database.loc[school_database['school_name']==school]
-		school_location = geolocator.geocode(school_data['primary_address_line_1'])
-		#print school
-		distance = vincenty(current_location,school_location)
-		if distance < radius:
-			names.append(school)
+	for row in range(len(school_database)):
+		distance = great_circle(coordinates,school_database.iloc[row]['coordinates']).miles
+		if distance <= radius:
+			names.append(school_database.iloc[row]['school_name'])
 	return names
 
-print(find_schools_in_radius("175 5th Avenue NYC",1))
+def generate_report(mode,names=[],location=(0,0),radius=0):
+	if mode=='location':
+		names = find_schools_in_radius(location,radius)
+	for name in names:
+		#create instance of class
+		school = SchoolData(name)
+		#use member functions to create report
+		
+
+
+
+

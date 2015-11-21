@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+from geopy import geocoders
 
 schools = pd.read_csv('data/DOE_High_School_Directory_2014-2015.csv')
 relevant_cols = ['dbn','school_name','primary_address_line_1','city']
@@ -35,5 +36,18 @@ school_performance.replace('N/A',np.nan,inplace=True)
 dfs = [schools,sat_scores,regents_performance,school_performance]
 school_database = reduce(lambda left,right: pd.merge(left,right,how='left',on='dbn'),dfs) 
 
+#create column that contains geopy coordinates
+geolocator = geocoders.GoogleV3()
+coordinates=[]
+for school in school_database['school_name']:
+	address=school_database.primary_address_line_1.where(school_database.school_name == school).max()
+	city = school_database.city.where(school_database.school_name == school).max()
+	school_location = geolocator.geocode(address+','+city,timeout=10)
+	school_coordinates = (school_location.latitude,school_location.longitude)
+	coordinates.append(school_coordinates)
+school_database['coordinates'] = coordinates
+
+
+
 school_database.to_csv('database.csv')
-school_database['school_name'].to_csv('school_names.csv')
+#school_database['school_name'].to_csv('school_names.csv')
