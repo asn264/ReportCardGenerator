@@ -34,10 +34,10 @@ def main():
 		And validate names from a backend list somewhere'''
 
 		#Ask the user to provide names
-		names = []
+		names = get_name()
 		
 		#Create a report 
-		generate_report(mode,[names]) 
+		generate_report(mode, names) 
 		
 	
 #Run the program
