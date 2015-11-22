@@ -67,13 +67,31 @@ def validate_location(str):
 				if c in cities:
 					return (place.latitude, place.longitude)
 
+			#This code gets executed if there is no match in str for any of the cities in the database.
 			print "Invalid location."
 			return None
 
-		#Figure out what specific exceptions can happen and handle them appropriately
-		except:
+		#AttributeError occurs if the service could not find a best-match place for the string and place = None.
+		except AttributeError:
 			print "Invalid location."
 			return None
+		#The following errors all pertain to errors with GeoPy and Google's geocoding service. 
+		except GeocoderTimedOut:
+			print "Remote geocoding service timed out. Try again or enter another location."
+			return None
+		except GeocoderParseError:
+			print "Geopy could not parse service's response. Try again or enter another location."
+			return None
+		except GeocoderQueryError:
+			print "Geopy detected a bad request. Try again or enter another location."
+			return None
+		except GeocoderQuotaExceeded: 
+			print "You have exceeded your quota for requests to the geocoding service."
+			return None
+		except GeocoderUnavailable:
+			print "Remote geocoding service is unavailable. Try again or enter another location."
+			return None
+
 
 def get_loc():
 
