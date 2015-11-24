@@ -1,29 +1,36 @@
 import sys
-from data import *
+import pandas as pd
 from geopy import geocoders
+from geopy.exc import GeocoderTimedOut
+from geopy.exc import GeocoderParseError
+from geopy.exc import GeocoderQueryError
+from geopy.exc import GeocoderQuotaExceeded
+from geopy.exc import GeocoderUnavailable
+
+school_database = pd.read_csv('database.csv')
 
 def prompt_for_mode():
 
 	'''Asks the user to choose a mode. Accepts KeyboardInterrupt and EOFError.'''
 	try:
-		return raw_input("Enter 'location' to generate reports by proximity and 'name' to search schools by name.")
+		return raw_input("Enter 'location' to generate reports by proximity and 'name' to search schools by name: ")
 	except (KeyboardInterrupt, EOFError):
 		sys.exit()	
 
 
-def interpret_mode(str):
+def interpret_mode(input):
 	
 	'''Interprets str as a mode. Accepts "quit".'''
-	if str.strip().lower() == 'quit':
+	if input.strip().lower() == 'quit':
 		sys.exit()	
-	elif str.strip().lower() in ['location', 'name'] :
-		return str.strip().lower()
+	elif input.strip().lower() in ['location', 'name'] :
+		return input.strip().lower()
 	else:
 		print "Invalid Mode."
 		return None
 
 
-def get_mode(str):
+def get_mode():
 
 	'''Recursively asks the user to choose a mode and interprets it.'''
 	mode = interpret_mode(prompt_for_mode())
@@ -37,12 +44,12 @@ def prompt_for_location():
 
 	'''Asks the user to provide a location. Accepts KeyboardInterrupt and EOFError.'''
 	try:
-		return raw_input("Enter an address or a set of coordinates.")
+		return raw_input("Enter an address or a set of coordinates: ")
 	except (KeyboardInterrupt, EOFError):
 		sys.exit()
 
 
-def validate_location(str):
+def validate_location(input):
 
 	'''Makes a best guess of user provided input using Google Maps. 
 	Complains if the (best-guess) city is not a city that appears in the school database.'''
@@ -51,7 +58,7 @@ def validate_location(str):
 
 	g = geocoders.GoogleV3()
 
-	if str.strip().lower() == 'quit':
+	if input.strip().lower() == 'quit':
 		sys.exit()
 
 	else:
@@ -61,7 +68,7 @@ def validate_location(str):
 		try:
 
 			#place.address is in unicode. Cast it as string and split into a list of strings. 
-			place = g.geocode(str, timeout=30)
+			place = g.geocode(input, timeout=30)
 			components = str(place.address).split(", ")
 			for c in components:
 				if c in cities:
@@ -93,7 +100,7 @@ def validate_location(str):
 			return None
 
 
-def get_loc():
+def get_location():
 
 	'''Recursively asks the user to enter a location and validates it.'''
 	location = validate_location(prompt_for_location())
@@ -107,15 +114,15 @@ def prompt_for_radius():
 
 	'''Asks the user to provide a positive-valued radius. Accepts KeyboardInterrupt and EOFError.'''
 	try: 
-		return raw_input("Enter a radius.")
+		return raw_input("Enter a radius: ")
 	except(KeyboardInterrupt, EOFError):
 		sys.exit()
 
 
-def validate_radius(str):
+def validate_radius(input):
 
 	'''Ensure that the radius is a positive int or float.'''
-	if str.lower() == 'quit':
+	if input.lower() == 'quit':
 		sys.exit()
 
 	else:
@@ -123,14 +130,14 @@ def validate_radius(str):
 		try:
 
 			#If no error is raised then str is an int but not necessarily positive.
-			return int(str) if int(str) > 0 else None
+			return int(input) if int(input) > 0 else None
 
 		except ValueError:
 
 			#If no error is raised then str is a float but not necessarily positive.
 			try:
 
-				return float(str) if float(str) > 0 else None
+				return float(input) if float(input) > 0 else None
 
 			#This only occurs if str is neither an int nor a float
 			except ValueError:
@@ -152,21 +159,21 @@ def prompt_for_names():
 
 	'''Asks for a list of names.'''
 	try:
-		return raw_input("Enter a list of comma-separated, high school names. If needed, see SchoolDirectory.txt for reference.")
+		return raw_input("Enter a list of comma-separated, high school names. If needed, see SchoolDirectory.txt for reference: ")
 	except(KeyboardInterrupt,EOFError):
 		sys.exit()
 
 
-def validate_names(str):
+def validate_names(input):
 
 	'''Takes a string containing a list of school names and makes sure that these schools are in the directory.'''
 
-	if str.strip().lower() == 'quit':
+	if input.strip().lower() == 'quit':
 		sys.exit()
 
 	else:
 
-		names = str.split(",")
+		names = input.split(",")
 		failed = []
 		schools = pd.unique(school_database['school_name'].values.ravel())
 
@@ -180,7 +187,7 @@ def validate_names(str):
 def ignore_invalid(names, failed):
 
 		try:
-			next = raw_input('''Would you like to generate reports for the schools that were in our directory? Type 'yes' to proceed. Press any other key to enter another list of schools.''')
+			next = raw_input('''Would you like to generate reports for the schools that were in our directory? Type 'yes' to proceed. Press any other key to enter another list of schools: ''')
 
 			if next.strip().lower() == 'quit':
 				sys.exit()

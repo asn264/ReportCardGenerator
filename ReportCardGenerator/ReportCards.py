@@ -9,6 +9,7 @@ Created: November 13 2015
 #What kind of radii does GeoPy accept
 
 from Interactions import *
+from generate import *
 
 
 def main():
@@ -19,13 +20,16 @@ def main():
 	if mode == 'location':
 	
 		#Ask the user to provide a location
-		loc = get_loc()
+		loc = get_location()
 		
 		#Ask the user to provide a radius
 		rad = get_radius()
+
+		#Get all schools in the radius
+		schools = find_schools_in_radius(loc,rad)
 		
 		#Create a report
-		generate_report(mode,loc,radius)
+		generate_report(mode,location=loc,radius = rad)
 	
 	#Here the mood is necessarily 'name'
 	else:
@@ -34,12 +38,12 @@ def main():
 		And validate names from a backend list somewhere'''
 
 		#Ask the user to provide names
-		names = get_name()
+		names = get_names()
 		
 		#Create a report 
 		generate_report(mode, names) 
 		
 	
 #Run the program
-if name == "__main__":
+if __name__ == "__main__":
 	main()
