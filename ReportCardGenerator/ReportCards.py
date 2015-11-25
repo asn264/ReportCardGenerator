@@ -26,10 +26,15 @@ def main():
 		rad = get_radius()
 
 		#Get all schools in the radius
-		schools = find_schools_in_radius(loc,rad)
-		
-		#Create a report
-		generate_report(mode,location=loc,radius = rad)
+		names = find_schools_in_radius(loc,rad)
+
+		if len(names)==0:
+			no_schools()
+
+		#Get the number of schools the user wants to generate reports of
+		num = get_number(len(names))
+		#Only use the closest schools
+		names=names[:num]
 	
 	#Here the mood is necessarily 'name'
 	else:
@@ -39,9 +44,9 @@ def main():
 
 		#Ask the user to provide names
 		names = get_names()
-		
-		#Create a report 
-		generate_report(mode, names) 
+	
+	#Create a report 
+	generate_report(names) 
 		
 	
 #Run the program

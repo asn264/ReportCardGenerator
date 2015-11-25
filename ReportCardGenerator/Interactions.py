@@ -224,7 +224,44 @@ def get_names():
 
 	else:
 		return names
+
+def no_schools():
+	'''Alerts the user when no schools are found within the distance of the given location'''
+
+	print "There were no schools found within the radius you specified of the input location."
+	get_location()
 	
+def prompt_for_number():
+	'''Asks for he number of schools the user wants.'''
+	try:
+		return raw_input("There are "+str(length)+" schools in this radius.\n How many of the closest schools do you want to generate a report of? ")
+	except(KeyboardInterrupt,EOFError):
+		sys.exit()
+
+def validate_number(input,length):
+	'''Ensure that the input is a positive integer not greater than the length of names'''
+	
+	if input.lower() == 'quit':
+		sys.exit()
+	else:
+		try:
+
+			#validates input
+			return int(input) if (int(input) > 0 and int(input<=length)) else None
+		except ValueError:
+				return None
+
+def get_number(length):
+	'''Recursively asks the user how many of the schools within the radius they want to get a report on. 
+	Verifies that the input is valid'''
+
+	number = validate_number(prompt_for_number(length),length)
+
+	if number is not None:
+		return number
+	else:
+		print "Invalid number."
+		return get_number()
 
 
 
