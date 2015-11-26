@@ -32,6 +32,7 @@ def main():
 	
 		#Get the number of schools the user wants to generate reports of
 		num = get_number(len(names))
+		
 		#Only use the closest schools
 		names=names[:num]
 

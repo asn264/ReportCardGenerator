@@ -24,11 +24,11 @@ def validate_names(input):
 		#Split the input string into a list of strings on the comma indices
 		names = [name.strip() for name in input.split(",")]
 		failed = []
-		schools = pd.unique(school_database['school_name'].values.ravel())
+		school_names = pd.unique(school_database['school_name'].values.ravel())
 
 		for i in range(len(names)):
 				if names[i] not in schools:
-					failed.append(names[i])
+					failed.append(school_names[i])
 
 		return [names, failed]
 
