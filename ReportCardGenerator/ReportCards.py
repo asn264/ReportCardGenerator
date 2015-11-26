@@ -8,8 +8,9 @@ Created: November 13 2015
 #Finish writing validate_loc
 #What kind of radii does GeoPy accept
 
-from Interactions import *
-from generate import *
+from mode import *
+from names import *
+from location import *
 
 
 def main():
