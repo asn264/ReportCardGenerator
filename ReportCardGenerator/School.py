@@ -15,7 +15,7 @@ class School(object):
 	def __init__(self, name):
 	'''Raises an error if name is not the name of a school in the database. Otherwise simply uses the name to later choose a row in the database dateframe.'''
 		if name in pd.unique(school_database['school_name'].values.ravel()):
-				self.name = name
+			self.name = name
 		else:
 			raise InvalidSchoolNameError
 
