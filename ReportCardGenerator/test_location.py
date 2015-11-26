@@ -35,4 +35,29 @@ class Interpret_Radius_Test(TestCase):
 	def test_quit(self):
 		self.assertRaises(SystemExit, validate_radius, 'quit')
 
+class Interpret_Number_Test(TestCase):
+	'''Tests the validate number function for valid and invalid inputs'''
 
+	def test_positive_int(self):
+		self.assertEqual(validate_number('1',7), 1)
+
+	def test_upper_bound(self):
+		self.assertEqual(validate_number('7',7), 7)
+
+	def test_nonpositive_int(self):	
+		self.assertEqual(validate_number('0',7), None)
+
+	def test_positive_float(self):
+		self.assertEqual(validate_number('1.2',7), None)
+
+	def test_nonpositive_float(self):
+		self.assertEqual(validate_number('-1.0',7), None)
+
+	def test_nonnumeric_float(self):
+		self.assertEqual(validate_number('abc',7), None)
+
+	def test_outside_upper_bound(self):
+		self.assertEqual(validate_number('8',7),None)
+
+	def test_quit(self):
+		self.assertRaises(SystemExit, validate_number, 'quit',7)

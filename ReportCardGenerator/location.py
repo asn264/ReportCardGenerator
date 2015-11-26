@@ -124,10 +124,9 @@ def no_schools():
 	'''Alerts the user when no schools are found within the distance of the given location'''
 
 	print "There were no schools found within the radius you specified of the input location."
-	get_location()
 
 	
-def prompt_for_number():
+def prompt_for_number(length):
 	'''Asks for he number of schools the user wants.'''
 	try:
 		return raw_input("There are "+str(length)+" schools in this radius.\n How many of the closest schools do you want to generate a report of? ")
@@ -143,7 +142,7 @@ def validate_number(input,length):
 	else:
 		try:
 			#validates input
-			return int(input) if (int(input) > 0 and int(input<=length)) else None
+			return int(input) if (int(input) > 0 and int(input)<=length) else None
 		except ValueError:
 				return None
 
@@ -158,7 +157,7 @@ def get_number(length):
 		return number
 	else:
 		print "Invalid number."
-		return get_number()
+		return get_number(length)
 
 
 def sort_schools_by_distance(names,distances):
