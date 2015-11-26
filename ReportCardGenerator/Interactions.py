@@ -1,11 +1,7 @@
 import sys
 import pandas as pd
 from geopy import geocoders
-from geopy.exc import GeocoderTimedOut
-from geopy.exc import GeocoderParseError
-from geopy.exc import GeocoderQueryError
-from geopy.exc import GeocoderQuotaExceeded
-from geopy.exc import GeocoderUnavailable
+from geopy.exc import GeocoderTimedOut, GeocoderParseError, GeocoderQueryError, GeocoderQuotaExceeded, GeocoderUnavailable
 
 school_database = pd.read_csv('database.csv')
 
@@ -53,8 +49,6 @@ def validate_location(input):
 
 	'''Makes a best guess of user provided input using Google Maps. 
 	Complains if the (best-guess) city is not a city that appears in the school database.'''
-
-	#https://geopy.readthedocs.org/en/1.10.0/index.html?highlight=time%20out#geopy.exc.GeocoderTimedOut
 
 	g = geocoders.GoogleV3()
 
@@ -173,31 +167,34 @@ def validate_names(input):
 
 	else:
 
-		names = input.split(",")
+		#Split the input string into a list of strings on the comma indices
+		names = [name.strip() for name in input.split(",")]
 		failed = []
 		schools = pd.unique(school_database['school_name'].values.ravel())
 
 		for i in range(len(names)):
-				if names[i].strip() not in schools:
+				if names[i] not in schools:
 					failed.append(names[i])
 
 		return [names, failed]
 
 
-def ignore_invalid(names, failed):
+def prompt_to_ignore_invalid_names():
 
-		try:
-			next = raw_input('''Would you like to generate reports for the schools that were in our directory? Type 'yes' to proceed. Press any other key to enter another list of schools: ''')
+	try:
+		return raw_input('''Would you like to generate reports for the schools that were in our directory? Type 'yes' to proceed. Press any other key to enter another list of schools: ''')
 
-			if next.strip().lower() == 'quit':
-				sys.exit()
-			elif next.strip().lower() == "yes":
-				return True
-			else:
-				return False
+	except (KeyboardInterrupt,EOFError):
+		sys.exit()
 
-		except (KeyboardInterrupt,EOFError):
-				sys.exit()
+def ignore_invalid_names(input):
+
+	if input.strip().lower() == 'quit':
+		sys.exit()
+	elif input.strip().lower() == "yes":
+		return True
+	else:
+		return False
 
 
 def get_names():
@@ -220,16 +217,18 @@ def get_names():
 			print "\n"
 
 			#Give the user the option to continue if there are some valid names in the list. 			
-			return [s for s in names if s not in failed] if ignore_invalid(names, failed) == True else get_names()
+			return [s for s in names if s not in failed] if ignore_invalid_names(prompt_to_ignore_invalid_names()) == True else get_names()
 
 	else:
 		return names
+
 
 def no_schools():
 	'''Alerts the user when no schools are found within the distance of the given location'''
 
 	print "There were no schools found within the radius you specified of the input location."
 	get_location()
+
 	
 def prompt_for_number():
 	'''Asks for he number of schools the user wants.'''
@@ -237,6 +236,7 @@ def prompt_for_number():
 		return raw_input("There are "+str(length)+" schools in this radius.\n How many of the closest schools do you want to generate a report of? ")
 	except(KeyboardInterrupt,EOFError):
 		sys.exit()
+
 
 def validate_number(input,length):
 	'''Ensure that the input is a positive integer not greater than the length of names'''
@@ -250,6 +250,7 @@ def validate_number(input,length):
 			return int(input) if (int(input) > 0 and int(input<=length)) else None
 		except ValueError:
 				return None
+
 
 def get_number(length):
 	'''Recursively asks the user how many of the schools within the radius they want to get a report on. 
