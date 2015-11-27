@@ -1,10 +1,28 @@
 import sys
 import pandas as pd
+from utilities import *
 from geopy import geocoders
 from geopy.distance import vincenty
 from geopy.exc import GeocoderTimedOut, GeocoderParseError, GeocoderQueryError, GeocoderQuotaExceeded, GeocoderUnavailable
 
-school_database = pd.read_csv('database.csv')
+def get_schools_by_location():
+
+	#Get location from the user
+	loc = get_location()
+
+	#Get all schools within the input radius of the specified location
+	names = find_schools_in_radius(loc,get_radius())
+
+	while len(names)==0:
+		no_schools()
+		names = find_schools_in_radius(loc,get_radius())
+
+	#Get the number of schools the user wants to generate reports of
+	num = get_number(len(names))
+	#Only use the closest schools
+	names=names[:num]
+
+	return names
 
 def prompt_for_location():
 
@@ -39,7 +57,7 @@ def validate_location(input):
 					return (place.latitude, place.longitude)
 
 			#This code gets executed if there is no match in str for any of the cities in the database.
-			print "Invalid location."
+			print "The location is not in the New York City area."
 			return None
 
 		#AttributeError occurs if the service could not find a best-match place for the string and place = None.
@@ -129,7 +147,7 @@ def no_schools():
 def prompt_for_number(length):
 	'''Asks for he number of schools the user wants.'''
 	try:
-		return raw_input("There are "+str(length)+" schools in this radius.\n How many of the closest schools do you want to generate a report of? ")
+		return raw_input("There are "+str(length)+" schools in this radius.\nHow many of the closest schools do you want to generate a report of? ")
 	except(KeyboardInterrupt,EOFError):
 		sys.exit()
 

@@ -20,22 +20,7 @@ def main():
 
 	if mode == 'location':
 
-		#Get location from the user
-		loc = get_location()
-
-		#Get all schools within the input radius of the specified location
-		names = find_schools_in_radius(loc,get_radius())
-
-		while len(names)==0:
-			no_schools()
-			names = find_schools_in_radius(loc,get_radius())
-	
-		#Get the number of schools the user wants to generate reports of
-		num = get_number(len(names))
-		#Only use the closest schools
-		names=names[:num]
-
-		print names
+		print get_schools_by_location()
 	
 	#Here the mode is necessarily 'name'
 	else:

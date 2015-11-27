@@ -1,7 +1,6 @@
 import sys
 import pandas as pd
-
-school_database = pd.read_csv('database.csv')
+from utilities import *
 
 def prompt_for_names():
 
