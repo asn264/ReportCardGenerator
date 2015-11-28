@@ -6,8 +6,9 @@ class Validate_Names_Test(TestCase):
 	the second is the ones not matched in the database. Test both lists are complete.'''
 
 	def test_validate_names(self):
-		#The output should be a list of lists. The first list is strings of the comma-separated entries. The second list is strings with no match in the names column of the school directory. 
-		self.assertEqual(validate_names("Henry Street School for International Studies, University Neighborhood High School, East Side Community School, TEST, nyc"), [['Henry Street School for International Studies', 'University Neighborhood High School', 'East Side Community School', 'TEST', 'nyc'], ['TEST', 'nyc']])
+		#The output should be a list of lists. The first list is valid School objects. The second list is strings with no match in the names column of the school directory. 
+		real_schools = [School(name) for name in ['University Neighborhood High School', 'East Side Community School']]
+		self.assertEqual(validate_names("University Neighborhood High School, East Side Community School, TEST, nyc"), [real_schools, ['TEST', 'nyc']])
 
 	def test_quit(self):
 		self.assertRaises(SystemExit, validate_names, 'quit')

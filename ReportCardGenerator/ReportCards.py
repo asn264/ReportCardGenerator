@@ -24,12 +24,9 @@ def main():
 	
 	#Here the mode is necessarily 'name'
 	else:
-	
-		'''To Do: names = get_names, a list. 
-		And validate names from a backend list somewhere'''
 
-		#Ask the user to provide names
-		names = get_names()
+		#Recursively ask the user to provide names. Validate and return list of School objects. 
+		schools = get_schools_by_name()
 	
 	#Create a report 
 	#generate_report(names) 
