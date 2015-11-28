@@ -18,18 +18,28 @@ def main():
 	#Ask the user to choose a mode
 	mode = get_mode()
 
-	if mode == 'location':
-
-		print get_schools_by_location()
+	if mode == 'top10':
 	
-	#Here the mode is necessarily 'name'
+		pass
+
 	else:
 
-		#Recursively ask the user to provide names. Validate and return list of School objects. 
-		schools = get_schools_by_name()
+		#Once everything below is complete we can throw this into: 
+		# schools = get_schools_by_location if mode=='location' else get_schools_by_name()
+
+		if mode == 'location':
+
+			print get_schools_by_location()
 	
-	#Create a report 
-	#generate_report(names) 
+
+		#Here the mode is necessarily 'name'
+		else mode == 'name':
+
+			#Recursively ask the user to provide names. Validate and return list of School objects. 
+			schools = get_schools_by_name()
+
+		#Create a report 
+		#generate_report(schools) 
 		
 	
 #Run the program
