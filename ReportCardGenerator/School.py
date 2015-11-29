@@ -1,6 +1,5 @@
 from utilities import *
 
-database = pd.read_csv('database.csv')
 
 class InvalidSchoolNameError(Exception):
 
@@ -54,7 +53,7 @@ class AggregateReportWriter(object):
 
 class InvalidComparisonReportWriter(Exception):
 
-	'''This exception is raised when you try to create a school object using a name that is not in the database.'''
+	'''This exception is raised when you try to do a comparison report for only one school'''
 
 	def __str__(self):
 		return "Cannot compare a school to itself!"

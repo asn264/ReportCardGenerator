@@ -1,13 +1,10 @@
-import sys
 from School import *
+import sys
 
 def prompt_for_names():
-
 	'''Asks for a list of names.'''
-	try:
-		return raw_input("Enter a list of comma-separated, high school names. If needed, see SchoolDirectory.txt for reference: ")
-	except(KeyboardInterrupt,EOFError):
-		sys.exit()
+
+	return raw_input("Enter a list of comma-separated, high school names. If needed, see SchoolDirectory.txt for reference: ")
 
 
 def validate_names(input):
@@ -39,11 +36,8 @@ def validate_names(input):
 
 def prompt_to_ignore_invalid_names():
 
-	try:
-		return raw_input('''Would you like to generate reports for the schools that were in our directory? Type 'yes' to proceed. Press any other key to enter another list of schools: ''')
+	return raw_input('''Would you like to generate reports for the schools that were in our directory? Type 'yes' to proceed. Press any other key to enter another list of schools: ''')
 
-	except (KeyboardInterrupt,EOFError):
-		sys.exit()
 
 def ignore_invalid_names(input):
 
@@ -65,17 +59,17 @@ def get_schools_by_name():
 		
 		if len(passed) == 0:
 			print "None of the schools you have provided are in our directory."
-			return get_names()
+			return get_schools_by_name()
 
 		else:
 
 			print "The following schools are not available in our directory: ", 
 			for school in range(len(failed)):
-				print failed[school],
+				print failed[school]+",",
 			print "\n"
 
 			#Give the user the option to continue if there are some valid names in the list. 			
-			return passed if ignore_invalid_names(prompt_to_ignore_invalid_names()) == True else get_names()
+			return passed if ignore_invalid_names(prompt_to_ignore_invalid_names()) == True else get_schools_by_name()
 
 	else:
 		return passed

@@ -11,6 +11,7 @@ Created: November 13 2015
 from mode import *
 from names import *
 from location import *
+import sys
 
 
 def main():
@@ -25,23 +26,16 @@ def main():
 	else:
 
 		#Once everything below is complete we can throw this into: 
-		# schools = get_schools_by_location if mode=='location' else get_schools_by_name()
-
-		if mode == 'location':
-
-			print get_schools_by_location()
-	
-
-		#Here the mode is necessarily 'name'
-		else mode == 'name':
-
-			#Recursively ask the user to provide names. Validate and return list of School objects. 
-			schools = get_schools_by_name()
+		schools = get_schools_by_location() if mode=='location' else get_schools_by_name()
 
 		#Create a report 
 		#generate_report(schools) 
+		print schools
 		
 	
 #Run the program
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except (KeyboardInterrupt, EOFError): #quit the program on ctrl-c and ctrl-d inputs
+		sys.exit()	

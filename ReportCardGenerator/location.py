@@ -1,11 +1,19 @@
-import sys
 import pandas as pd
-from utilities import *
+import sys
+
+#import relevant geopy libraries
 from geopy import geocoders
 from geopy.distance import vincenty
 from geopy.exc import GeocoderTimedOut, GeocoderParseError, GeocoderQueryError, GeocoderQuotaExceeded, GeocoderUnavailable
 
+#import other modules/classes
+from utilities import *
+from School import *
+
+
 def get_schools_by_location():
+	'''uses helper functions in the location module to prompt the user for a location and radius, 
+	and the number of schools within that radius to generate a report of. A list of school objects is returned'''
 
 	#Get location from the user
 	loc = get_location()
@@ -22,19 +30,46 @@ def get_schools_by_location():
 	#Only use the closest schools
 	names=names[:num]
 
+	#instantiate each school object and store all of the schools we want in a list
+	schools=[]
+	for name in names:
+		schools.append(School(name))
+
+	return schools
+
+
+def find_schools_in_radius(coordinates,radius):
+	'''function that returns the names of all schools within a specified radius of a location, sorted by distance'''
+
+	names=[]
+	distances=[]
+	for row in range(len(school_database)):
+		distance = vincenty(coordinates,school_database.iloc[row]['coordinates']).miles
+		if distance <= radius:
+			names.append(school_database.iloc[row]['school_name'])
+			distances.append(distance)
+	return sort_schools_by_distance(names,distances)
+
+
+def sort_schools_by_distance(names,distances):
+	'''modified implementation of bubble sort, sorting names based on distance'''
+	
+	for i in range(len(distances)):
+		for j in range(len(distances)-1-i):
+			if distances[j]>distances[j+1]:
+				distances[j],distances[j+1]=distances[j+1],distances[j]
+				names[j],names[j+1]=names[j+1],names[j]
+	
 	return names
 
-def prompt_for_location():
 
+def prompt_for_location():
 	'''Asks the user to provide a location. Accepts KeyboardInterrupt and EOFError.'''
-	try:
-		return raw_input("Enter an address or a set of coordinates: ")
-	except (KeyboardInterrupt, EOFError):
-		sys.exit()
+
+	return raw_input("Enter an address or a set of coordinates: ")
 
 
 def validate_location(input):
-
 	'''Makes a best guess of user provided input using Google Maps. 
 	Complains if the (best-guess) city is not a city that appears in the school database.'''
 
@@ -83,8 +118,8 @@ def validate_location(input):
 
 
 def get_location():
-
 	'''Recursively asks the user to enter a location and validates it.'''
+
 	location = validate_location(prompt_for_location())
 	if location is not None:
 		return location
@@ -93,17 +128,14 @@ def get_location():
 	
 
 def prompt_for_radius():
-
 	'''Asks the user to provide a positive-valued radius. Accepts KeyboardInterrupt and EOFError.'''
-	try: 
-		return raw_input("Enter a radius: ")
-	except(KeyboardInterrupt, EOFError):
-		sys.exit()
+
+	return raw_input("Enter a radius: ")
 
 
 def validate_radius(input):
-
 	'''Ensure that the radius is a positive int or float.'''
+
 	if input.lower() == 'quit':
 		sys.exit()
 
@@ -127,8 +159,8 @@ def validate_radius(input):
 		
 
 def get_radius():
-
 	'''Recursively asks the user to enter a radius. Only accepts positive numeric values.'''
+
 	rad = validate_radius(prompt_for_radius())
 	if rad is not None:
 		return rad
@@ -145,11 +177,9 @@ def no_schools():
 
 	
 def prompt_for_number(length):
-	'''Asks for he number of schools the user wants.'''
-	try:
-		return raw_input("There are "+str(length)+" schools in this radius.\nHow many of the closest schools do you want to generate a report of? ")
-	except(KeyboardInterrupt,EOFError):
-		sys.exit()
+	'''Asks for the number of schools the user wants.'''
+
+	return raw_input("There are "+str(length)+" schools in this radius.\nHow many of the closest schools do you want to generate a report of? ")
 
 
 def validate_number(input,length):
@@ -176,28 +206,3 @@ def get_number(length):
 	else:
 		print "Invalid number."
 		return get_number(length)
-
-
-def sort_schools_by_distance(names,distances):
-	"""modified implementation of bubble sort, sorting names based on distance"""
-	
-	for i in range(len(distances)):
-		for j in range(len(distances)-1-i):
-			if distances[j]>distances[j+1]:
-				distances[j],distances[j+1]=distances[j+1],distances[j]
-				names[j],names[j+1]=names[j+1],names[j]
-	
-	return names
-
-
-def find_schools_in_radius(coordinates,radius):
-	"""function that returns the names of all schools within a specified radius of a location, sorted by distance"""
-
-	names=[]
-	distances=[]
-	for row in range(len(school_database)):
-		distance = vincenty(coordinates,school_database.iloc[row]['coordinates']).miles
-		if distance <= radius:
-			names.append(school_database.iloc[row]['school_name'])
-			distances.append(distance)
-	return sort_schools_by_distance(names,distances)
