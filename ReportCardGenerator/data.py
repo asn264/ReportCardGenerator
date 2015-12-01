@@ -11,20 +11,21 @@ import numpy as np
 def loadDataframe(filename,relevant,columns,nullValues):
 	"""function to load data from csv and do some basic cleaning"""
 
-        data_df = pd.read_csv(filename)
-        data_df.columns = [col.lower() for col in data_df.columns]
+	data_df = pd.read_csv(filename)
+	data_df.columns = [col.lower() for col in data_df.columns]
         
 	#determine whether to keep each column in columns or drop each 
 	if relevant:
-                data_df = data_df[columns]
-        else:
-                data_df.drop(columns,axis=1,inplace=True)
-        #set index to the unique school identification number
+		data_df = data_df[columns]
+	else:
+		data_df.drop(columns,axis=1,inplace=True)
+
+	#set index to the unique school identification number
 	data_df.set_index('dbn')
 	#standardize null vlaues
-        data_df.replace(nullValues,np.nan,inplace=True)
+	data_df.replace(nullValues,np.nan,inplace=True)
 
-        return data_df
+	return data_df
 
 
 nullValues=['s','.','N/A']
@@ -42,6 +43,8 @@ school_performance = loadDataframe('data/DOE_High_School_Performance-Directory_2
 #do a left join on the tables starting with school, on the dbn column which uniquely identifies the school
 dfs = [schools,sat_scores,regents_performance,school_performance]
 school_database = reduce(lambda left,right: pd.merge(left,right,how='left',on='dbn'),dfs)
+
+#need to remove % signs and convert those fields to ints
 
 #create column that contains geopy coordinates
 geolocator = geocoders.GoogleV3()

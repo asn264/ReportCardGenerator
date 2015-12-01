@@ -44,7 +44,9 @@ def find_schools_in_radius(coordinates,radius):
 	names=[]
 	distances=[]
 	for row in range(len(school_database)):
+		#calculate vincenty distance in miles
 		distance = vincenty(coordinates,school_database.iloc[row]['coordinates']).miles
+		
 		if distance <= radius:
 			names.append(school_database.iloc[row]['school_name'])
 			distances.append(distance)

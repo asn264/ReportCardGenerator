@@ -11,6 +11,7 @@ Created: November 13 2015
 from mode import *
 from names import *
 from location import *
+from top10 import *
 import sys
 
 
@@ -21,16 +22,16 @@ def main():
 
 	if mode == 'top10':
 	
-		pass
+		schools = get_top10_schools()
 
 	else:
 
 		#Once everything below is complete we can throw this into: 
 		schools = get_schools_by_location() if mode=='location' else get_schools_by_name()
 
-		#Create a report 
-		#generate_report(schools) 
-		print schools
+	#Create a report 
+	#generate_report(schools) 
+	print schools
 		
 	
 #Run the program
