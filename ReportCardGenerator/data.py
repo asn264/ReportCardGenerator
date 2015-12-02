@@ -44,8 +44,6 @@ school_performance = loadDataframe('data/DOE_High_School_Performance-Directory_2
 dfs = [schools,sat_scores,regents_performance,school_performance]
 school_database = reduce(lambda left,right: pd.merge(left,right,how='left',on='dbn'),dfs)
 
-#need to remove % signs and convert those fields to ints
-
 #create column that contains geopy coordinates
 geolocator = geocoders.GoogleV3()
 coordinates=[]

@@ -103,28 +103,33 @@ def get_top10_schools():
 	names = calculate_top10(features,weights)
 
 	#instantiate each school object and store all of the schools we want in a list
-	'''schools=[]
+	schools=[]
 	for name in names:
 		schools.append(School(name))
 
-	return schools'''
+	return schools
 
 def calculate_top10(features,weights):
 	'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
 
 	database_copy = school_database
 
-	#normalize data
+	#remove % signs from columns that contain percentages and are stored as strings
+	database_copy.ix[:,database_copy.dtypes==object] = database_copy.ix[:,database_copy.dtypes==object].apply(lambda s:s.str.replace('%', ""))
+	#convert those columns to numeric type
+	database_copy = database_copy.convert_objects(convert_numeric=True)
 
+	#normalize data, can put in utilities
+
+	#compute score of each school
 	database_copy['score']=0
 	for i in range(0,len(features)):
 		database_copy['score']+=database_copy[features[i]]*weights[i]
-	print database_copy['score']
 
 	#sort by score
+	database_copy.sort('score',ascending=False,inplace=True)
 
-	#take slice of length 10 of school names
+	#return the names of the top 10 schools
+	return database_copy['school_name'][:10].tolist()
 
-	#return names
-	return 1
 
