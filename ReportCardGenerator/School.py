@@ -21,9 +21,8 @@ class School(object):
 			raise InvalidSchoolNameError
 
 
-	def __repr__(self):
+	def __str__(self):
 		'''We can uniquely define each School object by its name.'''
-
 		return self.name
 
 
@@ -37,6 +36,46 @@ class School(object):
 
 	def get_name(self):
 		return self.name
+
+	def get_address(self):
+		pass
+
+	def get_SAT_scores(self):
+		pass
+
+	def get_regents_pass_rate_june(self):
+		pass
+
+	def get_regents_pass_rate_august(self):
+		pass
+
+	def ontrack_rate_2012(self):
+		pass
+
+	def graduation_rate_2012(self):
+		pass
+
+	def college_career_rate_2012(self):
+		pass
+
+	def student_satisfaction_rate_2012(self):
+		pass
+
+	def ontrack_rate_2013(self):
+		pass
+
+	def graduation_rate_2013(self):
+		pass
+
+	def college_career_rate_2013(self):
+		pass
+
+	def student_satisfaction_rate_2012(self):
+		pass
+
+
+
+
 
 
 

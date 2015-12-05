@@ -72,5 +72,6 @@ def get_schools_by_name():
 			return passed if ignore_invalid_names(prompt_to_ignore_invalid_names()) == True else get_schools_by_name()
 
 	else:
-		return passed
+		#Even though the user is allowed to enter non-unique schools, we will ignore duplicates. 
+		return list(set(passed))
 
