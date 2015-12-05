@@ -7,13 +7,11 @@ import sys
 import numpy as np
 
 #array containing valid features that the user can choose from to create a top 10 ranking
-valid_features = ['num of sat test takers','sat critical reading avg. score',
-'sat math avg. score', 'sat writing avg. score', 'total cohort  - june',
- 'total math/ela apm - june', '% of cohort - june', 'total cohort  - august',
- 'total math/ela apm - august', '% of cohort - august', 'ontrack_year1_2013',
- 'graduation_rate_2013', 'college_career_rate_2013',
- 'student_satisfaction_2013', 'ontrack_year1_2012', 'graduation_rate_2012',
- 'college_career_rate_2012', 'student_satisfaction_2012']
+valid_features = ['Num of Sat Test Takers','SAT Critical Reading Avg',
+'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
+ 'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013',
+ 'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
+ 'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
 
 #array containing weights that are accepted by the program
 valid_weights = np.arange(1,101)
@@ -114,7 +112,8 @@ def calculate_top10(features,weights):
 
 	database_copy = school_database
 
-	#normalize data, can put in utilities
+	#normalize data
+	database_copy[valid_features] = database_copy[valid_features].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
 
 	#compute score of each school
 	database_copy['score']=0
