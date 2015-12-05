@@ -7,7 +7,7 @@ import sys
 import numpy as np
 
 #array containing valid features that the user can choose from to create a top 10 ranking
-valid_features = ['Num of Sat Test Takers','SAT Critical Reading Avg',
+valid_features = ['Num of SAT Test Takers','SAT Critical Reading Avg',
 'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
  'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013',
  'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
