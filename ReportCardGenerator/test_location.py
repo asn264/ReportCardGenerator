@@ -12,6 +12,9 @@ class Validate_Location_Test(TestCase):
 	def test_wrong_city(self):
 		self.assertEqual(validate_location("33 Deerfield Rd Whippany NJ 07981"), None)
 
+	def test_quit(self):
+		self.assertRaises(SystemExit, validate_location, 'quit')
+
 class Interpret_Radius_Test(TestCase):
 
 	'''Tests validate_radius function for valid and invalid inputs including: positive ints and floats, 
@@ -61,3 +64,4 @@ class Interpret_Number_Test(TestCase):
 
 	def test_quit(self):
 		self.assertRaises(SystemExit, validate_number, 'quit',7)
+

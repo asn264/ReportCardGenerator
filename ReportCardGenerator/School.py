@@ -35,37 +35,8 @@ class School(object):
 		else:
 			return False
 
-
-class AggregateReportWriter(object):
-
-	'''Each instance of this object will create a single PDF file that contains aggregated summary statistics for all schools in the attribute list schools.'''
-	def __init__(self, outbuf, schools):
-		pass
-
-	def write_report(self):
-		pass 
-		#Name, address, and city
-		#SAT Results
-		#Figure out what math/ela apm instance
-		#2013 Results: ontrack, graduation, college, student satisfaction
+	def get_name(self):
+		return self.name
 
 
 
-class InvalidComparisonReportWriter(Exception):
-
-	'''This exception is raised when you try to do a comparison report for only one school'''
-
-	def __str__(self):
-		return "Cannot compare a school to itself!"
-
-class ComparisonReportWriter(object):
-	'''Each instance of this object will create a single PDF file that contains aggregated summary statistics for all schools in the attribute list schools.'''
-
-	def __init__(self, outbuf, schools):
-		if len(schools) > 1:
-			self.schools = schools
-		else:
-			raise InvalidComparisonReportWriter
-
-	def write_report(self):
-		pass
