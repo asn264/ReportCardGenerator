@@ -114,11 +114,6 @@ def calculate_top10(features,weights):
 
 	database_copy = school_database
 
-	#remove % signs from columns that contain percentages and are stored as strings
-	database_copy.ix[:,database_copy.dtypes==object] = database_copy.ix[:,database_copy.dtypes==object].apply(lambda s:s.str.replace('%', ""))
-	#convert those columns to numeric type
-	database_copy = database_copy.convert_objects(convert_numeric=True)
-
 	#normalize data, can put in utilities
 
 	#compute score of each school
