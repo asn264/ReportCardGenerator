@@ -33,7 +33,7 @@ def main():
 
 
 	#Asks the user to choose a filename. Does not allow overwriting. 
-	filename = get_filename()
+	filename = get_filename(prompt_for_filename())
 
 	#Create a PDF report 
 	writer = SummaryWriter(filename, mode, schools)

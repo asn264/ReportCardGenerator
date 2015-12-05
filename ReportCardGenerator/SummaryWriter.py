@@ -22,7 +22,7 @@ class SummaryWriter(object):
 	'''Each instance of this object will create a single PDF file that contains aggregated summary statistics for all schools in the attribute list schools.'''
 	def __init__(self, filename, mode, schools):
 		if all(isinstance(school, School) for school in schools):
-			self.filename = filename+".pdf"
+			self.filename = filename
 			self.schools = schools
 			self.mode = mode
 			self.styles = getSampleStyleSheet()
