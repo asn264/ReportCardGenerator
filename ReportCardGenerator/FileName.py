@@ -55,13 +55,13 @@ def get_filename():
 	else:
 		#At this point, we have not concatenated ".pdf" to user_input. We check that the prefix is legal.
 		if not check_legal_filename(user_input):
-			print "Illegal filename: enter a string containing only alphanumeric characters and/or underscores."
+			print "Illegal filename."
 			return get_filename()
 
 		#In order to check whether the file exists, we need to concatenate .pdf
 		user_input = user_input + ".pdf"
 		if check_filename_exists(user_input): 
-			print "This file already exists in the current directory. Please enter another filename."
+			print "This file already exists in the current directory."
 			return get_filename()
 
 		return user_input

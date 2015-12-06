@@ -76,8 +76,6 @@ class School(object):
 	def get_student_satisfaction_rate_2012(self):
 		pass
 
-test = School('East Side Community School')
-
 
 
 
