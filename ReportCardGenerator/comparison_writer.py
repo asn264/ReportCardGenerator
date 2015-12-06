@@ -1,5 +1,5 @@
 from utilities import *
-from School import *
+from school import *
 
 import matplotlib.pyplot as plt
 import warnings

@@ -8,7 +8,7 @@ from geopy.exc import GeocoderTimedOut, GeocoderParseError, GeocoderQueryError, 
 
 #import other modules/classes
 from utilities import *
-from School import *
+from school import *
 
 
 def get_schools_by_location():

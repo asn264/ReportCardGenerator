@@ -9,7 +9,7 @@ from names import *
 from location import *
 from top10 import *
 from filename import *
-from ComparisonWriter import *
+from comparison_writer import *
 import sys
 
 
