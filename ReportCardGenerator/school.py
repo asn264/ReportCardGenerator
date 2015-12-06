@@ -40,42 +40,9 @@ class School(object):
 	def get_column_value(self, column_name):
 		return school_database[school_database['school_name']==self.name][column_name].values[0]
 
-	def get_address(self):
-		#delete
+	def get_full_address(self):
 		pass
 
-	def get_SAT_scores(self):
-		pass
-
-	def get_regents_pass_rate_june(self):
-		pass
-
-	def get_regents_pass_rate_august(self):
-		pass
-
-	def get_ontrack_rate_2012(self):
-		pass
-
-	def get_graduation_rate_2012(self):
-		pass
-
-	def get_college_career_rate_2012(self):
-		pass
-
-	def get_student_satisfaction_rate_2012(self):
-		pass
-
-	def get_ontrack_rate_2013(self):
-		pass
-
-	def get_graduation_rate_2013(self):
-		pass
-
-	def get_college_career_rate_2013(self):
-		pass
-
-	def get_student_satisfaction_rate_2012(self):
-		pass
 
 
 

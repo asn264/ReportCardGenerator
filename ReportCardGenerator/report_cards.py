@@ -27,18 +27,26 @@ def main():
 
 		#Prompts the user to enter an address and a radius to find all schools in the area and build a report
 		schools,input_location,input_radius = get_schools_by_location() 
+		
 
 	else:
 		#Prompts user to enter a list of school names to build a report
 		schools = get_schools_by_name()
 
 
+
 	#Asks the user to choose a filename. Does not allow overwriting. 
 	filename = get_filename()
 
 	#Create a PDF report 
-	#writer = SummaryWriter(filename, mode, schools)
-	#writer.write_report()
+	'''
+	if mode == 'top10':
+		writer = SummaryWriter(filename, mode, schools, input_features, input_weights)
+	elif mode == 'location':
+		writer = SummaryWriter(filename, mode, schools, input_location, input_radius)
+	else:
+		writer = SummaryWriter(filename, mode, schools)
+	'''
 
 	writer = ComparisonWriter(mode,schools)
 	writer.write_report()
