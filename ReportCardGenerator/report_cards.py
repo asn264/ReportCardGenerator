@@ -21,12 +21,12 @@ def main():
 	if mode == 'top10':
 
 		#Prompts the user to enter a set of ranking metrics and weights to build a custom school ranking report 
-		schools,input_features,input_weights = get_top10_schools()
+		schools,input_parameters = get_top10_schools()
 
 	elif mode == 'location':
 
 		#Prompts the user to enter an address and a radius to find all schools in the area and build a report
-		schools,input_location,input_radius = get_schools_by_location() 
+		schools,input_parameters = get_schools_by_location() 
 		
 
 	else:

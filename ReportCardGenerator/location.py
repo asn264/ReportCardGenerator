@@ -35,7 +35,7 @@ def get_schools_by_location():
 	for name in names:
 		schools.append(School(name))
 
-	return schools,input_location,input_radius
+	return schools,[input_location,input_radius]
 
 
 def find_schools_in_radius(coordinates,radius):

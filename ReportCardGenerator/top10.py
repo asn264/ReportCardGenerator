@@ -98,14 +98,14 @@ def get_top10_schools():
 	with respect to the features and weights given. A list of the 10 school objects is returned'''
 
 	features,weights = get_features()
-	names = calculate_top10(features,weights)
+	names,scores = calculate_top10(features,weights)
 
 	#instantiate each school object and store all of the schools we want in a list
 	schools=[]
 	for name in names:
 		schools.append(School(name))
 
-	return schools,features,weights
+	return schools,[features,weights,scores]
 
 def calculate_top10(features,weights):
 	'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
@@ -123,7 +123,7 @@ def calculate_top10(features,weights):
 	#sort by score
 	database_copy.sort('score',ascending=False,inplace=True)
 
-	#return the names of the top 10 schools
-	return database_copy['school_name'][:10].tolist()
+	#return the names and scores of the top 10 schools
+	return database_copy['school_name'][:10].tolist(),database_copy['score'][:10].tolist()
 
 
