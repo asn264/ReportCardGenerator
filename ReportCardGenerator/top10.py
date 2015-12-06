@@ -110,7 +110,7 @@ def get_top10_schools():
 def calculate_top10(features,weights):
 	'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
 
-	database_copy = school_database
+	database_copy = school_database.copy()
 
 	#normalize data
 	database_copy[valid_features] = database_copy[valid_features].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))

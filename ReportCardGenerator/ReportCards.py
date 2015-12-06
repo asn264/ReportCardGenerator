@@ -4,15 +4,12 @@ Created: November 13 2015
 
 '''
 
-#Consider explaining the program to the user
-#Finish writing validate_loc
-#What kind of radii does GeoPy accept
-
 from mode import *
 from names import *
 from location import *
 from top10 import *
 from filename import *
+from ComparisonWriter import *
 import sys
 
 
@@ -36,7 +33,10 @@ def main():
 	filename = get_filename()
 
 	#Create a PDF report 
-	writer = SummaryWriter(filename, mode, schools)
+	#writer = SummaryWriter(filename, mode, schools)
+	#writer.write_report()
+
+	writer = ComparisonWriter(mode,schools)
 	writer.write_report()
 		
 	
