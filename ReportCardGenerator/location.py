@@ -16,14 +16,14 @@ def get_schools_by_location():
 	and the number of schools within that radius to generate a report of. A list of school objects is returned'''
 
 	#Get location from the user
-	loc = get_location()
+	location,input_location = get_location()
 
 	#Get all schools within the input radius of the specified location
-	names = find_schools_in_radius(loc,get_radius())
+	names,input_radius = find_schools_in_radius(loc,get_radius())
 
 	while len(names)==0:
 		no_schools()
-		names = find_schools_in_radius(loc,get_radius())
+		names,input_radius = find_schools_in_radius(loc,get_radius())
 
 	#Get the number of schools the user wants to generate reports of
 	num = get_number(len(names))
@@ -35,7 +35,7 @@ def get_schools_by_location():
 	for name in names:
 		schools.append(School(name))
 
-	return schools
+	return schools,input_location,input_radius
 
 
 def find_schools_in_radius(coordinates,radius):
@@ -50,7 +50,7 @@ def find_schools_in_radius(coordinates,radius):
 		if distance <= radius:
 			names.append(school_database.iloc[row]['school_name'])
 			distances.append(distance)
-	return sort_schools_by_distance(names,distances)
+	return sort_schools_by_distance(names,distances),radius
 
 
 def sort_schools_by_distance(names,distances):
@@ -91,7 +91,7 @@ def validate_location(input):
 			components = str(place.address).split(", ")
 			for c in components:
 				if c in cities:
-					return (place.latitude, place.longitude)
+					return (place.latitude, place.longitude),input
 
 			#This code gets executed if there is no match in str for any of the cities in the database.
 			print "The location is not in the New York City area."
@@ -122,9 +122,9 @@ def validate_location(input):
 def get_location():
 	'''Recursively asks the user to enter a location and validates it.'''
 
-	location = validate_location(prompt_for_location())
+	location,input = validate_location(prompt_for_location())
 	if location is not None:
-		return location
+		return location,input
 	else:
 		return get_location()
 	

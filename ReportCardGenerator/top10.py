@@ -105,7 +105,7 @@ def get_top10_schools():
 	for name in names:
 		schools.append(School(name))
 
-	return schools
+	return schools,features,weights
 
 def calculate_top10(features,weights):
 	'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''

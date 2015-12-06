@@ -21,12 +21,19 @@ def main():
 	if mode == 'top10':
 
 		#Prompts the user to enter a set of ranking metrics and weights to build a custom school ranking report 
-		schools = get_top10_schools()
+		schools,input_features,input_weights = get_top10_schools()
+		print input_features
+		print input_weights
 
+	elif mode == 'location':
+
+		#Prompts the user to enter an address and a radius to find all schools in the area and build a report
+		schools,input_location,input_radius = get_schools_by_location() 
+		print input_location
+		print input_radius
 	else:
-
-		#Allows the user to choose schools either by location, or explicitly by name
-		schools = get_schools_by_location() if mode=='location' else get_schools_by_name()
+		#Prompts user to enter a list of school names to build a report
+		schools = get_schools_by_name()
 
 
 	#Asks the user to choose a filename. Does not allow overwriting. 
