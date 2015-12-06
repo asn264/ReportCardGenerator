@@ -1,4 +1,4 @@
-from School import *
+from school import *
 import sys
 
 def prompt_for_names():

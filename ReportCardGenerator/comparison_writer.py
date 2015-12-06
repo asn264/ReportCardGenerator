@@ -22,6 +22,7 @@ class ComparisonWriter(object):
 			raise InvalidComparisonWriter
 
 	def write_report(self):
+		pass
 		
 
 	def sat_boxplots(self):
