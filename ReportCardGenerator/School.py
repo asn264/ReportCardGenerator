@@ -41,6 +41,7 @@ class School(object):
 		return school_database[school_database['school_name']==self.name][column_name].values[0]
 
 	def get_address(self):
+		#delete
 		pass
 
 	def get_SAT_scores(self):

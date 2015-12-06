@@ -47,6 +47,7 @@ def get_filename():
 	'''Takes user input for a filename. If the file exists, warns the user and forces them to choose another filename. Only allows legal filenames.
 	Returns passing filenames with .pdf concatenated.'''
 
+
 	user_input = prompt_for_filename()
 
 	if user_input == "quit":
