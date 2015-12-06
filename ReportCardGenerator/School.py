@@ -37,6 +37,9 @@ class School(object):
 	def get_name(self):
 		return self.name
 
+	def get_column_value(self, column_name):
+		return school_database[school_database['school_name']==self.name][column_name].values[0]
+
 	def get_address(self):
 		pass
 
@@ -49,31 +52,31 @@ class School(object):
 	def get_regents_pass_rate_august(self):
 		pass
 
-	def ontrack_rate_2012(self):
+	def get_ontrack_rate_2012(self):
 		pass
 
-	def graduation_rate_2012(self):
+	def get_graduation_rate_2012(self):
 		pass
 
-	def college_career_rate_2012(self):
+	def get_college_career_rate_2012(self):
 		pass
 
-	def student_satisfaction_rate_2012(self):
+	def get_student_satisfaction_rate_2012(self):
 		pass
 
-	def ontrack_rate_2013(self):
+	def get_ontrack_rate_2013(self):
 		pass
 
-	def graduation_rate_2013(self):
+	def get_graduation_rate_2013(self):
 		pass
 
-	def college_career_rate_2013(self):
+	def get_college_career_rate_2013(self):
 		pass
 
-	def student_satisfaction_rate_2012(self):
+	def get_student_satisfaction_rate_2012(self):
 		pass
 
-
+test = School('East Side Community School')
 
 
 

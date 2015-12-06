@@ -13,7 +13,6 @@ from School import *
 class InvalidSummaryWriterError(Exception):
 
 	'''This exception is raised if you try to create an instance of a SummaryWriter without passing it a list of School objects and a valid outbuf.'''
-
 	pass
 
 
