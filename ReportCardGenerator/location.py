@@ -98,7 +98,7 @@ def validate_location(input):
 			return None
 
 		#AttributeError occurs if the service could not find a best-match place for the string and place = None.
-		except AttributeError:
+		except (AttributeError,UnicodeEncodeError):
 			print "Invalid location."
 			return None
 		#The following errors all pertain to errors with GeoPy and Google's geocoding service. 
