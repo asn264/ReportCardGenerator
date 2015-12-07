@@ -22,10 +22,11 @@ class ComparisonWriter(object):
 			raise InvalidComparisonWriter
 
 	def write_report(self):
+		self.sat_test_takers_bar_plot()
 		pass
 		
 
-	def sat_boxplots(self):
+	def sat_score_boxplots(self):
 		'''plots boxplots showing the distribution of SAT scores for each of the 3 sections'''
 		
 		data=[]
@@ -48,6 +49,40 @@ class ComparisonWriter(object):
 		plt.title('SAT Score Distribution',fontsize=20)
 		plt.show()
 
+	def sat_score_bar_plot(self):
+		'''plots a bar plot of the SAT scores by section for each school'''
+
+		#get SAT score data for each section
+		math_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT Math Avg']
+		reading_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT Critical Reading Avg']
+		writing_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT Writing Avg']
+		math_data = math_data.dropna()
+		reading_data = reading_data.dropna()
+		writing_data = writing_data.dropna()
+
+		#create a bar for each month
+		bar_width = 0.2
+		rects1 = plt.bar(np.arange(len(math_data)), math_data, bar_width,color='b',label='Math')
+		rects2 = plt.bar(np.arange(len(reading_data))+bar_width, reading_data, bar_width,color='r',label='Reading')
+		rects3 = plt.bar(np.arange(len(writing_data))+2*bar_width, writing_data, bar_width,color='g',label='Writing')
+
+		#set labels, titles, and ticks with school names
+		plt.xlabel('Schools')
+		plt.ylabel('SAT Score')
+		plt.title('SAT Scores by School')
+		plt.xticks(np.arange(len(math_data)) + 1.5*bar_width, self.names,fontsize=8)
+		plt.xticks(rotation=90)
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		#plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+		plt.legend()
+
+		plt.show()
+
 	def sat_test_takers_histogram(self):
 		'''plots a distribution of the number of SAT test takers'''
 		
@@ -56,7 +91,7 @@ class ComparisonWriter(object):
 		data = data.reset_index(drop=True)
 
 		#dynamically set number of bins based on number of schools
-		plt.hist(data.dropna(),bins=max(10,int(len(names)/10)))
+		plt.hist(data.dropna(),bins=max(10,int(len(self.names)/10)))
 
 		#set axis labels and title
 		plt.xlabel('Number of SAT Test Takers',fontsize=16)
@@ -65,7 +100,29 @@ class ComparisonWriter(object):
 
 		plt.show()
 
-	def regents_bar_plot():
+	def sat_test_takers_bar_plot(self):
+		'''plots a bar plot of the number of students who took the sat by school'''
+
+		#get data for the number of test takers
+		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
+		data = data.dropna()
+
+		plt.bar(np.arange(len(data)),data,align='center')
+		plt.xlabel('Schools')
+		plt.ylabel('Number of Students')
+		plt.xticks(np.arange(len(data)), self.names,fontsize=8)
+		plt.xticks(rotation=90)
+		plt.title('Number of SAT Test Takers by School')
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		plt.show()
+
+
+	def regents_bar_plot(self):
 		'''plots a bar plot of the % of students that passed the Regents exam in June and August'''
 
 		#get Regents data for each month
@@ -83,7 +140,7 @@ class ComparisonWriter(object):
 		plt.xlabel('Schools')
 		plt.ylabel('Regents Pass Rate (%)')
 		plt.title('Regents Pass Rate by School')
-		plt.xticks(np.arange(len(june_data)) + bar_width, names,fontsize=8)
+		plt.xticks(np.arange(len(june_data)) + bar_width, self.names,fontsize=8)
 		plt.xticks(rotation=90)
 
 		#catches user warning rather than printing it
@@ -94,3 +151,4 @@ class ComparisonWriter(object):
 		plt.legend()
 
 		plt.show()
+
