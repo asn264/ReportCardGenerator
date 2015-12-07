@@ -21,12 +21,12 @@ def main():
 	if mode == 'top10':
 
 		#Prompts the user to enter a set of ranking metrics and weights to build a custom school ranking report 
-		schools,input_parameters = get_top10_schools()
+		schools,user_parameters = get_top10_schools()
 
 	elif mode == 'location':
 
 		#Prompts the user to enter an address and a radius to find all schools in the area and build a report
-		schools,input_parameters = get_schools_by_location() 
+		schools,user_parameters = get_schools_by_location() 
 		
 
 	else:
@@ -39,14 +39,8 @@ def main():
 	filename = get_filename()
 
 	#Create a PDF report 
-	'''
-	if mode == 'top10':
-		writer = SummaryWriter(filename, mode, schools, input_features, input_weights)
-	elif mode == 'location':
-		writer = SummaryWriter(filename, mode, schools, input_location, input_radius)
-	else:
-		writer = SummaryWriter(filename, mode, schools)
-	'''
+	#writer = SummaryWriter(filename, mode, schools, user_parameters)
+	#writer.write_report()
 
 	writer = ComparisonWriter(mode,schools)
 	writer.write_report()

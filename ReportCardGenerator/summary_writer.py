@@ -18,51 +18,54 @@ class InvalidSummaryWriterError(Exception):
 	pass
 
 
+
 class SummaryWriter(object):
 
 	'''Each instance of this object will create a single PDF file that contains aggregated summary statistics for all schools in the attribute list schools.'''
-	def __init__(self, filename, mode, schools, first_user_param = None, second_user_param = None, third_user_param = None):
+	def __init__(self, filename, mode, schools, user_params = []):
 
 		if all(isinstance(school, School) for school in schools):
 
-			#the following define the report content
+			#The following attributes define the report content, including attributes in the if/elif clauses below.
 			self.filename = filename
 			self.schools = schools
 			self.mode = mode
+			self.performance_params = ['Num of SAT Test Takers','SAT Critical Reading Avg', 'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
+ 			'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013', 'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
+ 			'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
 
-			if first_user_param and second_user_param:
-				
-				#Location mode requires exactly two user parameters - the location and the radius
+			#Only name mode requires no user parameters
+			if len(user_params) == 0:
+				if mode != 'name':
+					raise InvalidSummaryWriterError
+
+			#Only location mode requires two user parameters: the location and the radius
+			elif len(user_params) == 2:
 				if mode == 'location':
-
-					if not third_user_param:
-						self.location = first_user_param
-						self.radius = second_user_param
-
-					else:
-						raise InvalidSummaryWriterError
-
-				#Top 10 mode requires exactly three user parameters - the features, the weights, and the scores
-				elif mode == 'top10':
-
-					if third_user_param:
-						self.features = first_user_param
-						self.weights = second_user_param
-						self.scores = third_user_param
-
-					else:
-						raise InvalidSummaryWriterError
-
-				#First_user_param and second_user_param should only be defined when mode is 'location' or 'top10', not 'name' mode
+					self.location = user_params[0]
+					self.radius = user_params[1]
 				else:
 					raise InvalidSummaryWriterError
 
+			#Online top10 mode requires three user parameters: the features, the weights, and the scores
+			elif len(user_params) == 3:
+				if mode == 'top10':
+					self.features = user_params[0]
+					self.weights = user_params[1]
+					self.scores = user_params[2]
+				else:
+					raise InvalidSummaryWriterError
 
-			#the following define the report formatting
+			else:
+				raise InvalidSummaryWriterError
+
+
+			#The following define the report formatting
 			self.styles = getSampleStyleSheet()
 			self.small_spacer = Spacer(1,0.05*inch)
 			self.medium_spacer = Spacer(1,0.25*inch)
 			self.big_spacer = Spacer(1,defaultPageSize[1]/4.0)
+
 
 		#Raise an error if all of the items in schools are not School objects
 		else:
@@ -93,7 +96,7 @@ class SummaryWriter(object):
 	def describe_location_query(self):
 
 		'''In location mode, creates a new paragraph object representing the location query.'''
-		pass
+		print self.location, self.radius
 
 
 	def get_schools(self):
@@ -140,41 +143,43 @@ class SummaryWriter(object):
 			return None
 
 
-def get_formatted_values(self, metric, value):
+	def get_formatted_values(self, metric, value):
 
-	if 'Num' in metric or 'SAT' in metric: 
+		if 'Num' in metric or 'SAT' in metric: 
 
-		#If the metric name contains the substring "Num" or "SAT", print it without a decimal value
-		summary.append(Paragraph(metric + ': ' + str(int(value)), self.styles['Normal']))
+			#If the metric name contains the substring "Num" or "SAT", print it without a decimal value
+			return Paragraph(metric + ': ' + str(int(value)), self.styles['Normal'])
 
 
+		elif 'Regents' in metric:
+			#This is a rate so print it with a percent sign
+			return Paragraph(metric + ': ' + str(value) + '%', self.styles['Normal'])
+
+		#This is metric necessarily contains information in one of the Graduation Results sections
 		else:
-
-			if 'Regents' in metric:
-				#This is a rate so print it with a percent sign
-				summary.append(Paragraph(metric + ': ' + str(value) + '%', self.styles['Normal']))
-
-			#This is metric contains information in one of the Graduation Results sections
+			#Strip '- 2012' or "- 2013" from the metric name. These are all rates so print them with a percent sign.
+			if '2012' in metric:
+				return Paragraph(metric.replace('- 2012', '') + ': ' + str(value) + '%', self.styles['Normal'])
 			else:
-				#Strip '- 2012' or "- 2013" from the metric name. These are all rates so print them with a percent sign.
-				if '2012' in metric:
-					summary.append(Paragraph(metric.replace('- 2012', '') + ': ' + str(value) + '%', self.styles['Normal']))
-				else:
-					summary.append(Paragraph(metric.replace('- 2013', '' ) + ': ' + str(value) + '%', self.styles['Normal']))
+				return Paragraph(metric.replace('- 2013', '' ) + ': ' + str(value) + '%', self.styles['Normal'])
+
+
+	def add_section_spacer(self, metric):
+
+		if metric in ['SAT Writing Avg', 'Regents Pass Rate - August', 'Student Satisfaction Rate - 2013']:
+			return self.small_spacer
+		else:
+			return None
 
 
 	def get_school_summary(self, school):
 
 		'''Returns a list of Paragraph objects summarizing basic school information.'''
 
-		params = ['Num of SAT Test Takers','SAT Critical Reading Avg', 'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
- 		'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013', 'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
- 		'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
-
  		#Summary is a list of paragraph objects containing the school name and address, 
 		summary = self.get_basic_info(school)
 
-		for metric in params:
+		for metric in self.performance_params:
 
 			value = school.get_column_value(metric)
 
@@ -187,35 +192,12 @@ def get_formatted_values(self, metric, value):
 					summary.append(section_heading)
 
 				#Add the actual metric values, formatted as necessary
-				summary.append(self.get_formatted_values(metric))
+				summary.append(self.get_formatted_values(metric, value))
 
-				'''
-				#Now handle the formatting of the actual metric values
-				if 'Num' in metric or 'SAT' in metric: 
-
-					#If the metric name contains the substring "Num" or "SAT", print it without a decimal value
-					summary.append(Paragraph(metric + ': ' + str(int(value)), self.styles['Normal']))
-
-
-				else:
-
-					if 'Regents' in metric:
-						#This is a rate so print it with a percent sign
-						summary.append(Paragraph(metric + ': ' + str(value) + '%', self.styles['Normal']))
-
-					#This is metric contains information in one of the Graduation Results sections
-					else:
-						#Strip '- 2012' or "- 2013" from the metric name. These are all rates so print them with a percent sign.
-						if '2012' in metric:
-							summary.append(Paragraph(metric.replace('- 2012', '') + ': ' + str(value) + '%', self.styles['Normal']))
-						else:
-							summary.append(Paragraph(metric.replace('- 2013', '' ) + ': ' + str(value) + '%', self.styles['Normal']))
-
-				'''
-
-				#At the end of every section, add a small space
-				if metric in ['SAT Writing Avg', 'Regents Pass Rate - August', 'Student Satisfaction Rate - 2013']:
-					summary.append(self.small_spacer)
+				#At the end of every section, add a small space. section_spacer is None if the current metric is not the end of a section
+				section_spacer = self.add_section_spacer(metric)
+				if section_spacer:
+					summary.append(section_spacer)
 
 		#At the end of the summary, add a space to separate from the next school's summary
 		summary.append(self.medium_spacer)
