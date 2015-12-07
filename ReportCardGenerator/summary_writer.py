@@ -30,7 +30,7 @@ class SummaryWriter(object):
 			self.filename = filename
 			self.schools = schools
 			self.mode = mode
-			self.performance_params = ['Num of SAT Test Takers','SAT Critical Reading Avg', 'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
+			self.performance_params = ['Number of SAT Test Takers','SAT Critical Reading Avg', 'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
  			'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013', 'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
  			'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
 
@@ -62,9 +62,9 @@ class SummaryWriter(object):
 
 			#The following define the report formatting
 			self.styles = getSampleStyleSheet()
-			self.small_spacer = Spacer(1,0.05*inch)
-			self.medium_spacer = Spacer(1,0.25*inch)
-			self.big_spacer = Spacer(1,defaultPageSize[1]/4.0)
+			self.small_spacer = KeepTogether(Spacer(1,0.05*inch))
+			self.medium_spacer = KeepTogether(Spacer(1,0.40*inch))
+			self.big_spacer = KeepTogether(Spacer(1,defaultPageSize[1]/4.0))
 
 
 		#Raise an error if all of the items in schools are not School objects
@@ -96,12 +96,12 @@ class SummaryWriter(object):
 	def describe_location_query(self):
 
 		'''In location mode, creates a new paragraph object representing the location query.'''
-		print self.location, self.radius
+		return Paragraph("The " + str(len(self.schools)) + " schools in this report are within " + str(self.radius) + " mile(s) of " + self.location + ".", self.styles['Normal'])
 
 
 	def get_schools(self):
 
-		'''creates a new paragraph object containing the names of the schools in the report.'''
+		'''Creates a new paragraph object containing the names of the schools in the report.'''
 		return Paragraph("The schools evaluated in this report are: " + ", ".join([str(school) for school in self.schools]) + ".", self.styles['Normal'])
 
 
@@ -112,6 +112,38 @@ class SummaryWriter(object):
 			return [self.big_spacer, self.get_title(), self.get_authors(), self.medium_spacer, self.get_mode(), self.describe_location_query(), self.get_schools(), PageBreak()]
 		else:
 			return [self.big_spacer, self.get_title(), self.get_authors(), self.medium_spacer, self.get_mode(), self.get_schools(), PageBreak()]
+
+
+	def get_top10_schools_by_rank(self):
+
+		schools_by_rank = []
+		for rank in range(len(self.schools)):
+			schools_by_rank.append(Paragraph( str(rank + 1) + ". " + str(self.schools[rank]) + " (" + str(self.scores[rank]) + ")", self.styles['Heading4']))
+
+		return schools_by_rank
+
+
+	def get_top10_ranking_system(self):
+		
+		ranking_system = [Paragraph('The features used to generate this ranking system and the weight assigned to each feature: ', self.styles['Heading3'])
+		features_and_weights = ""
+		for curr_feature in range(len(self.features)):
+			string += (self.features[curr_feature] + " (" + str(self.weights[curr_feature]) + "); "
+		ranking_system.append(Paragraph(features_and_weights, self.styles['Normal']))
+		return ranking_system
+
+
+	def get_top10_page(self):
+
+		'''In top10 mode, this page appears immediately after the title page and lists the top 10 schools and their scores in order,
+		as well as the evaluation system that generated the list.'''
+
+		top10_page = [Paragraph('Top 10 Schools by Custom Rank: ', self.styles['Heading3'])]
+		top10_page.extend(get_top10_school_by_rank())
+		top10_page.append(self.medium_spacer)
+		top10_page.append(self.get_top10_ranking_system())
+		top10_page.append(PageBreak())
+		return top10_page
 
 
 	def get_basic_info(self,school):
@@ -128,7 +160,7 @@ class SummaryWriter(object):
 
 		'''Creates section headings for each section of data.'''
 
-		if metric == 'Num of SAT Test Takers':
+		if metric == 'Number of SAT Test Takers':
 			return Paragraph('SAT Results:', self.styles['Heading4'])
 
 		elif metric == 'Regents Pass Rate - June':
@@ -145,9 +177,9 @@ class SummaryWriter(object):
 
 	def get_formatted_values(self, metric, value):
 
-		if 'Num' in metric or 'SAT' in metric: 
+		if 'Number' in metric or 'SAT' in metric: 
 
-			#If the metric name contains the substring "Num" or "SAT", print it without a decimal value
+			#If the metric name contains the substring "Number" or "SAT", print it without a decimal value
 			return Paragraph(metric + ': ' + str(int(value)), self.styles['Normal'])
 
 
@@ -157,11 +189,17 @@ class SummaryWriter(object):
 
 		#This is metric necessarily contains information in one of the Graduation Results sections
 		else:
-			#Strip '- 2012' or "- 2013" from the metric name. These are all rates so print them with a percent sign.
+			#Strip '- 2012' or "- 2013" from the metric name. Besides student satisfaction rate (scale to 10), they are percents.
 			if '2012' in metric:
-				return Paragraph(metric.replace('- 2012', '') + ': ' + str(value) + '%', self.styles['Normal'])
+				if 'Student Satisfaction' in metric:
+					return Paragraph(metric.replace('- 2012', '') + ': ' + str(value) + " out of 10.", self.styles['Normal'])
+				else:
+					return Paragraph(metric.replace('- 2012', '') + ': ' + str(value) + '%', self.styles['Normal'])
 			else:
-				return Paragraph(metric.replace('- 2013', '' ) + ': ' + str(value) + '%', self.styles['Normal'])
+				if 'Student Satisfaction' in metric:
+					return Paragraph(metric.replace('- 2013', '' ) + ': ' + str(value) + " out of 10.", self.styles['Normal'])
+				else:
+					return Paragraph(metric.replace('- 2013', '' ) + ': ' + str(value) + '%', self.styles['Normal'])
 
 
 	def add_section_spacer(self, metric):
@@ -219,19 +257,20 @@ class SummaryWriter(object):
 		elements = self.get_title_page()
 
 		if self.mode == 'top10':
-			#elements.extend(self.get_top10_page())
-			pass
+			elements.extend(self.get_top10_page())
 
 		elements.extend(self.get_summaries())
 		doc = SimpleDocTemplate(self.filename)
 		doc.build(elements) 
 
 
-
-test_schools = [School('Henry Street School for International Studies'), School('University Neighborhood High School'), School('East Side Community School')]
-writer = SummaryWriter('test.pdf', 'name', test_schools)
-writer.write_report()
-
+#from location import *
+#mode = 'location'
+#schools, params = get_schools_by_location()
+#test_schools = [School('Henry Street School for International Studies'), School('University Neighborhood High School'), School('East Side Community School')]
+#writer = SummaryWriter('test.pdf', 'name', test_schools)
+#writer = SummaryWriter('test.pdf', mode, schools, params)
+#writer.write_report()
 
 
 
