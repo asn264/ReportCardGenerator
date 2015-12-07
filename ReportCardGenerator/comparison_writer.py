@@ -52,7 +52,7 @@ class ComparisonWriter(object):
 		'''plots a distribution of the number of SAT test takers'''
 		
 		#get data for the number of test takers
-		data = school_database.loc[school_database['school_name'].isin(self.names)]['Num of SAT Test Takers']
+		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
 
 		#dynamically set number of bins based on number of schools

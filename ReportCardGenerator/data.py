@@ -46,7 +46,7 @@ dfs = [schools,sat_scores,regents_performance,school_performance]
 school_database = reduce(lambda left,right: pd.merge(left,right,how='left',on='dbn'),dfs)
 
 #rename columns to user-friendly names
-school_database.rename(columns={'primary_address_line_1': 'address', 'num of sat test takers': 'Num of SAT Test Takers', 'sat critical reading avg. score': 'SAT Critical Reading Avg', 'sat math avg. score': 'SAT Math Avg', 'sat writing avg. score': 'SAT Writing Avg', '% of cohort - june': 'Regents Pass Rate - June','% of cohort - august': 'Regents Pass Rate - August','ontrack_year1_2013': 'Graduation Ontrack Rate - 2013', 'graduation_rate_2013': 'Graduation Rate - 2013', 'college_career_rate_2013': 'College Career Rate - 2013', 'student_satisfaction_2013': 'Student Satisfaction Rate - 2013','ontrack_year1_2012': 'Graduation Ontrack Rate - 2012', 'graduation_rate_2012': 'Graduation Rate - 2012', 'college_career_rate_2012': 'College Career Rate - 2012', 'student_satisfaction_2012': 'Student Satisfaction Rate - 2012'}, inplace=True)
+school_database.rename(columns={'primary_address_line_1': 'address', 'num of sat test takers': 'Number of SAT Test Takers', 'sat critical reading avg. score': 'SAT Critical Reading Avg', 'sat math avg. score': 'SAT Math Avg', 'sat writing avg. score': 'SAT Writing Avg', '% of cohort - june': 'Regents Pass Rate - June','% of cohort - august': 'Regents Pass Rate - August','ontrack_year1_2013': 'Graduation Ontrack Rate - 2013', 'graduation_rate_2013': 'Graduation Rate - 2013', 'college_career_rate_2013': 'College Career Rate - 2013', 'student_satisfaction_2013': 'Student Satisfaction Rate - 2013','ontrack_year1_2012': 'Graduation Ontrack Rate - 2012', 'graduation_rate_2012': 'Graduation Rate - 2012', 'college_career_rate_2012': 'College Career Rate - 2012', 'student_satisfaction_2012': 'Student Satisfaction Rate - 2012'}, inplace=True)
 
 #remove commas and unnecessary "the" in school names
 school_database['school_name'] = school_database['school_name'].str.replace(',','')
@@ -69,6 +69,9 @@ def get_coordinates(df):
 
 #create column that contains geopy coordinates
 school_database['coordinates'] = school_database.apply(get_coordinates,axis=1)
+
+#remove schools with no performance data
+school_database.dropna(thresh=(len(school_database.columns) - 17), axis=0,inplace=True)
 
 #write the dataframe to a csv
 school_database.to_csv('database.csv')

@@ -122,9 +122,9 @@ def validate_location(input):
 def get_location():
 	'''Recursively asks the user to enter a location and validates it.'''
 
-	location,input = validate_location(prompt_for_location())
-	if location is not None:
-		return location,input
+	user_location = validate_location(prompt_for_location())
+	if user_location is not None:
+		return user_location
 	else:
 		return get_location()
 	
