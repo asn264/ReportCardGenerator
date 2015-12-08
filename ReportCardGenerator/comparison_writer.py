@@ -22,12 +22,14 @@ class ComparisonWriter(object):
 			raise InvalidComparisonWriter
 
 	def write_report(self):
-		self.graduation_and_college_bar_plots()
+		'''writes a comparison report by calling all of the relevant plotting functions'''
+
+		self.student_satisfaction_bar_plots()
 		pass
 		
 
 	def sat_score_boxplots(self):
-		'''plots boxplots showing the distribution of SAT scores for each of the 3 sections'''
+		'''saves boxplots showing the distribution of SAT scores for each of the 3 sections'''
 		
 		data=[]
 		sections = ['Math','Critical Reading','Writing']
@@ -50,7 +52,7 @@ class ComparisonWriter(object):
 		plt.show()
 
 	def sat_score_bar_plot(self):
-		'''plots a bar plot of the SAT scores by section for each school'''
+		'''saves a bar plot of the SAT scores by section for each school'''
 
 		#get SAT score data for each section
 		math_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT Math Avg']
@@ -83,7 +85,7 @@ class ComparisonWriter(object):
 		plt.show()
 
 	def sat_test_takers_histogram(self):
-		'''plots a distribution of the number of SAT test takers'''
+		'''saves a histogram showing the distribution of the number of SAT test takers'''
 		
 		#get data for the number of test takers
 		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
@@ -100,7 +102,7 @@ class ComparisonWriter(object):
 		plt.show()
 
 	def sat_test_takers_bar_plot(self):
-		'''plots a bar plot of the number of students who took the SAT by school'''
+		'''saves a bar plot of the number of students who took the SAT by school'''
 
 		#get data for the number of test takers
 		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
@@ -122,7 +124,7 @@ class ComparisonWriter(object):
 
 
 	def regents_box_plots(self):
-		'''plots boxplots showing the distribution of Regents pass rates for each of the 2 months'''
+		'''saves boxplots showing the distribution of Regents pass rates for each of the 2 months'''
 		
 		data=[]
 		months = ['June','August']
@@ -145,7 +147,7 @@ class ComparisonWriter(object):
 		plt.show()
 
 	def regents_bar_plot(self):
-		'''plots a bar plot of the % of students that passed the Regents exam in June and August'''
+		'''saves a bar plot of the % of students that passed the Regents exam in June and August'''
 
 		#get Regents data for each month
 		june_data = school_database.loc[school_database['school_name'].isin(self.names)]['Regents Pass Rate - June']
@@ -175,7 +177,7 @@ class ComparisonWriter(object):
 		plt.show()
 
 	def graduation_and_college_box_plots(self):
-		'''plots boxplots showing the distribution of ontrack graduation, graduation, and college career rates'''
+		'''saves boxplots showing the distribution of ontrack graduation, graduation, and college career rates'''
 		
 		data=[]
 		categories = ['Graduation Ontrack','Graduation','College Career']
@@ -209,7 +211,7 @@ class ComparisonWriter(object):
 		plt.show()
 
 	def graduation_and_college_bar_plots(self):
-		'''plots bar plots of ontrack graduation, graduation, and college career rates for each school'''
+		'''saves bar plots of ontrack graduation, graduation, and college career rates for each school'''
 
 		years = ['2012','2013']
 
@@ -219,9 +221,19 @@ class ComparisonWriter(object):
 			ontrack_data = school_database.loc[school_database['school_name'].isin(self.names)]['Graduation Ontrack Rate - '+year]
 			graduation_data = school_database.loc[school_database['school_name'].isin(self.names)]['Graduation Rate - '+year]
 			college_data = school_database.loc[school_database['school_name'].isin(self.names)]['College Career Rate - '+year]
-			ontrack_data = ontrack_data.dropna()
-			graduation_data = graduation_data.dropna()
-			college_data = college_data.dropna()
+
+			#drop schools that have any of the the three rates missing
+			rows_to_drop=[]
+			for i in range (0,len(self.names)):
+				if np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]):
+					row_index = ontrack_data.index.values[i]
+					rows_to_drop.append(row_index)
+			ontrack_data = ontrack_data.drop(rows_to_drop)
+			graduation_data = graduation_data.drop(rows_to_drop)
+			college_data = college_data.drop(rows_to_drop)
+
+			#clear plot
+			plt.clf()
 
 			#create a bar for each category
 			bar_width = 0.2
@@ -230,7 +242,6 @@ class ComparisonWriter(object):
 			rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College Career')
 
 			#set labels, titles, and ticks with school names
-			plt.clf()
 			plt.xlabel('Schools')
 			plt.ylabel('Rate (%)')
 			plt.title('Graduation and College Career Rates by School in '+year)
@@ -246,4 +257,63 @@ class ComparisonWriter(object):
 
 			plt.show()
 
+	def student_satisfaction_box_plots(self):
+		'''saves boxplots showing the distribution of student satisfaction scores'''
+		
+		data=[]
+		years = ['2012','2013']
+
+		#append data from each month of the Regents data
+		for year in years:
+			year_data = school_database.loc[school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - '+year]
+			data.append(year_data)
+
+		plt.figure()
+		plt.boxplot(data)
+
+		#set xticks for each section, with the section name
+		plt.xticks(np.arange(1,len(years)+1),years)
+
+		#set axis labels and title
+		plt.xlabel('Years',fontsize=16)
+		plt.ylabel('Satisfaction (out of 10)',fontsize=16)
+		plt.title('Student Satisfaction by Year',fontsize=20)
+		plt.show()
+
+	def student_satisfaction_bar_plots(self):
+		'''saves a bar plot of the student satisfaction scores by school'''
+
+		#get Regents data for each month
+		data_2012 = school_database.loc[school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2012']
+		data_2013 = school_database.loc[school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2013']
+
+		#drop schools that have any of the the two years missing
+		rows_to_drop=[]
+		for i in range (0,len(self.names)):
+			if np.isnan(data_2012.iloc[i]) or np.isnan(data_2013.iloc[i]):
+				row_index = data_2012.index.values[i]
+				rows_to_drop.append(row_index)
+		data_2012 = data_2012.drop(rows_to_drop)
+		data_2013 = data_2013.drop(rows_to_drop)
+
+		#create a bar for each month
+		bar_width = 0.35
+		rects1 = plt.bar(np.arange(len(data_2012)), data_2012, bar_width,color='b',label='2012')
+		rects2 = plt.bar(np.arange(len(data_2013))+bar_width, data_2013, bar_width,color='r',label='2013')
+
+		#set labels, titles, and ticks with school names
+		plt.xlabel('Schools')
+		plt.ylabel('Satisfaction (out of 10')
+		plt.title('Student Satisfaction by School')
+		plt.xticks(np.arange(len(data_2012)) + bar_width, self.names,fontsize=8)
+		plt.xticks(rotation=90)
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		plt.legend()
+
+		plt.show()
 
