@@ -22,7 +22,7 @@ class ComparisonWriter(object):
 			raise InvalidComparisonWriter
 
 	def write_report(self):
-		self.sat_test_takers_bar_plot()
+		self.graduation_and_college_bar_plots()
 		pass
 		
 
@@ -78,7 +78,6 @@ class ComparisonWriter(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
-		#plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 		plt.legend()
 
 		plt.show()
@@ -101,7 +100,7 @@ class ComparisonWriter(object):
 		plt.show()
 
 	def sat_test_takers_bar_plot(self):
-		'''plots a bar plot of the number of students who took the sat by school'''
+		'''plots a bar plot of the number of students who took the SAT by school'''
 
 		#get data for the number of test takers
 		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
@@ -121,6 +120,29 @@ class ComparisonWriter(object):
 
 		plt.show()
 
+
+	def regents_box_plots(self):
+		'''plots boxplots showing the distribution of Regents pass rates for each of the 2 months'''
+		
+		data=[]
+		months = ['June','August']
+
+		#append data from each month of the Regents data
+		for month in months:
+			month_data = school_database.loc[school_database['school_name'].isin(self.names)]['Regents Pass Rate - '+month]
+			data.append(month_data)
+
+		plt.figure()
+		plt.boxplot(data)
+
+		#set xticks for each section, with the section name
+		plt.xticks(np.arange(1,len(months)+1),months)
+
+		#set axis labels and title
+		plt.xlabel('Months',fontsize=16)
+		plt.ylabel('Pass Rate (%)',fontsize=16)
+		plt.title('Regents Pass Rate by Month',fontsize=20)
+		plt.show()
 
 	def regents_bar_plot(self):
 		'''plots a bar plot of the % of students that passed the Regents exam in June and August'''
@@ -151,4 +173,77 @@ class ComparisonWriter(object):
 		plt.legend()
 
 		plt.show()
+
+	def graduation_and_college_box_plots(self):
+		'''plots boxplots showing the distribution of ontrack graduation, graduation, and college career rates'''
+		
+		data=[]
+		categories = ['Graduation Ontrack','Graduation','College Career']
+		years = ['2012','2013']
+		tick_labels = []
+
+		#append data from each category
+		for category in categories:
+			for year in years:
+				category_data = school_database.loc[school_database['school_name'].isin(self.names)][category + ' Rate - ' + year]
+				data.append(category_data)
+				tick_labels.append(category + ' - '+year)
+
+		plt.figure()
+		plt.boxplot(data)
+
+		#set xticks for each section, with the section name
+		plt.xticks(np.arange(1,len(categories)*len(years)+1),tick_labels)
+		plt.xticks(rotation=90)
+
+		#set axis labels and title
+		plt.xlabel('Categories',fontsize=16)
+		plt.ylabel('Rate (%)',fontsize=16)
+		plt.title('Graduation and College Career Rates',fontsize=20)
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		plt.show()
+
+	def graduation_and_college_bar_plots(self):
+		'''plots bar plots of ontrack graduation, graduation, and college career rates for each school'''
+
+		years = ['2012','2013']
+
+		#make bar plot for each year
+		for year in years:
+			#get the student rates for each category
+			ontrack_data = school_database.loc[school_database['school_name'].isin(self.names)]['Graduation Ontrack Rate - '+year]
+			graduation_data = school_database.loc[school_database['school_name'].isin(self.names)]['Graduation Rate - '+year]
+			college_data = school_database.loc[school_database['school_name'].isin(self.names)]['College Career Rate - '+year]
+			ontrack_data = ontrack_data.dropna()
+			graduation_data = graduation_data.dropna()
+			college_data = college_data.dropna()
+
+			#create a bar for each category
+			bar_width = 0.2
+			rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Graduation Ontrack')
+			rects2 = plt.bar(np.arange(len(graduation_data))+bar_width, graduation_data, bar_width,color='r',label='Graduation')
+			rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College Career')
+
+			#set labels, titles, and ticks with school names
+			plt.clf()
+			plt.xlabel('Schools')
+			plt.ylabel('Rate (%)')
+			plt.title('Graduation and College Career Rates by School in '+year)
+			plt.xticks(np.arange(len(graduation_data)) + 1.5*bar_width, self.names,fontsize=8)
+			plt.xticks(rotation=90)
+
+			#catches user warning rather than printing it
+			with warnings.catch_warnings():
+				warnings.simplefilter("ignore", UserWarning)
+				plt.tight_layout()
+
+			plt.legend()
+
+			plt.show()
+
 

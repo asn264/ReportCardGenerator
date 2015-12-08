@@ -4,7 +4,7 @@ def prompt_for_mode():
 
 	'''Asks the user to choose a mode. Accepts KeyboardInterrupt and EOFError.'''
 	
-	return raw_input("Enter 'location' to generate reports by proximity and 'name' to search schools by name. Type 'top10' to enter Top 10 mode. ")
+	return raw_input("\nEnter 'location' to generate reports by proximity and 'name' to search schools by name. Type 'top10' to enter Top 10 mode. ")
 
 
 def interpret_mode(input):
@@ -15,7 +15,7 @@ def interpret_mode(input):
 	elif input.strip().lower() in ['location', 'name', 'top10'] :
 		return input.strip().lower()
 	else:
-		print "Invalid Mode."
+		print "\nInvalid Mode."
 		return None
 
 
