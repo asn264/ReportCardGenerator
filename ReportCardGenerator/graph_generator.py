@@ -5,6 +5,7 @@ from school import *
 #import necessary libraries
 import matplotlib.pyplot as plt
 import warnings
+import os
 
 class InvalidComparisonError(Exception):
 
@@ -20,18 +21,18 @@ class GraphGenerator(object):
 		if len(schools) > 1:
 			self.schools = schools
 			self.names =[str(school) for school in schools]
+
+			#create directory to save plots
+			script_dir = os.path.dirname(__file__)
+			plots_dir = os.path.join(script_dir, 'Plots/')
+
+			if not os.path.isdir(results_dir):
+				os.makedirs(results_dir)
+
 		else:
 			raise InvalidComparisonError
 
-	"""
-	def write_report(self):
-		'''writes a comparison report by calling all of the relevant plotting functions'''
-
-		self.student_satisfaction_bar_plots()
-		pass"""
-		
-
-	def sat_score_boxplots(self):
+	def create_sat_score_boxplots(self):
 		'''saves boxplots showing the distribution of SAT scores for each of the 3 sections'''
 		
 		data=[]
@@ -52,9 +53,14 @@ class GraphGenerator(object):
 		plt.xlabel('SAT Sections',fontsize=16)
 		plt.ylabel('Score',fontsize=16)
 		plt.title('SAT Score Distribution',fontsize=20)
-		plt.show()
 
-	def sat_score_bar_plot(self):
+		#save plot
+		filename = 'sat_boxplots'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+
+		return 'Plots/'+filename+'.png'
+
+	def create_sat_score_bar_plot(self):
 		'''saves a bar plot of the SAT scores by section for each school'''
 
 		#get SAT score data for each section
@@ -85,9 +91,13 @@ class GraphGenerator(object):
 
 		plt.legend()
 
-		plt.show()
+		#save plot
+		filename = 'sat_barplot'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
-	def sat_test_takers_histogram(self):
+		return 'Plots/'+filename+'.png'
+
+	def create_sat_test_takers_histogram(self):
 		'''saves a histogram showing the distribution of the number of SAT test takers'''
 		
 		#get data for the number of test takers
@@ -102,9 +112,13 @@ class GraphGenerator(object):
 		plt.ylabel('Number of Schools',fontsize=16)
 		plt.title('Distribution of Number of SAT Test Takers',fontsize=20)
 
-		plt.show()
+		#save plot
+		filename = 'sat_test_takers_histogram'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
-	def sat_test_takers_bar_plot(self):
+		return 'Plots/'+filename+'.png'
+
+	def create_sat_test_takers_bar_plot(self):
 		'''saves a bar plot of the number of students who took the SAT by school'''
 
 		#get data for the number of test takers
@@ -123,10 +137,14 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
-		plt.show()
+		#save plot
+		filename = 'sat_test_takers_barplot'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+
+		return 'Plots/'+filename+'.png'
 
 
-	def regents_box_plots(self):
+	def create_regents_box_plots(self):
 		'''saves boxplots showing the distribution of Regents pass rates for each of the 2 months'''
 		
 		data=[]
@@ -147,9 +165,14 @@ class GraphGenerator(object):
 		plt.xlabel('Months',fontsize=16)
 		plt.ylabel('Pass Rate (%)',fontsize=16)
 		plt.title('Regents Pass Rate by Month',fontsize=20)
-		plt.show()
+		
+		#save plot
+		filename = 'regents_boxplots'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
-	def regents_bar_plot(self):
+		return 'Plots/'+filename+'.png'
+
+	def create_regents_bar_plot(self):
 		'''saves a bar plot of the % of students that passed the Regents exam in June and August'''
 
 		#get Regents data for each month
@@ -177,9 +200,13 @@ class GraphGenerator(object):
 
 		plt.legend()
 
-		plt.show()
+		#save plot
+		filename = 'regents_barplot'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
-	def graduation_and_college_box_plots(self):
+		return 'Plots/'+filename+'.png'
+
+	def create_graduation_and_college_box_plots(self):
 		'''saves boxplots showing the distribution of ontrack graduation, graduation, and college career rates'''
 		
 		data=[]
@@ -211,9 +238,13 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
-		plt.show()
+		#save plot
+		filename = 'graduation_and_college_boxplots'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
-	def graduation_and_college_bar_plots(self):
+		return 'Plots/'+filename+'.png'
+
+	def create_graduation_and_college_bar_plots(self):
 		'''saves bar plots of ontrack graduation, graduation, and college career rates for each school'''
 
 		years = ['2012','2013']
@@ -258,9 +289,13 @@ class GraphGenerator(object):
 
 			plt.legend()
 
-			plt.show()
+			#save plot
+			filename = 'graduation_and_college_barplots'
+			plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
-	def student_satisfaction_box_plots(self):
+			return 'Plots/'+filename+'.png'
+
+	def create_student_satisfaction_box_plots(self):
 		'''saves boxplots showing the distribution of student satisfaction scores'''
 		
 		data=[]
@@ -281,9 +316,14 @@ class GraphGenerator(object):
 		plt.xlabel('Years',fontsize=16)
 		plt.ylabel('Satisfaction (out of 10)',fontsize=16)
 		plt.title('Student Satisfaction by Year',fontsize=20)
-		plt.show()
+		
+		#save plot
+		filename = 'student_satisfaction_boxplots'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
-	def student_satisfaction_bar_plots(self):
+		return 'Plots/'+filename+'.png'
+
+	def create_student_satisfaction_bar_plots(self):
 		'''saves a bar plot of the student satisfaction scores by school'''
 
 		#get Regents data for each month
@@ -318,5 +358,9 @@ class GraphGenerator(object):
 
 		plt.legend()
 
-		plt.show()
+		#save plot
+		filename = 'student_satisfaction_barplots'
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+
+		return 'Plots/'+filename+'.png'
 
