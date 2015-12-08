@@ -10,6 +10,7 @@ from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
 from school import *
+from graph_generator import *
 
 
 class InvalidSummaryWriterError(Exception):
@@ -41,6 +42,11 @@ class SummaryWriter(object):
 			self.performance_params = ['Number of SAT Test Takers','SAT Critical Reading Avg', 'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
  			'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013', 'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
  			'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
+ 			
+ 			try:
+ 				self.graph_generator = GraphGenerator(self.schools)
+ 			except InvalidComparisonError:
+ 				pass
 
 			#Only name mode requires no user parameters. Raise an exception in other cases.
 			if len(user_params) == 0:
@@ -301,6 +307,22 @@ class SummaryWriter(object):
 		return summaries 
 
 
+	def get_graphs(self):
+
+		graphs = []
+
+		if self.mode == 'location':
+
+			#both comparison and distribution
+			#don't do bar plots if there are more than 20
+			#don't do distributions if there are less than 5
+
+			if length(self.schools) > :
+
+				#This returns a filename for the .png
+				#graphs.append(Image(self.graph_generator.create_sat_boxplot())
+
+
 	def write_report(self):
 
 		'''Writes the report by appending Paragraph, Spacer, and PageBreak objects as necessary.'''
@@ -314,6 +336,9 @@ class SummaryWriter(object):
 
 		#Add the individual summaries from each school.
 		elements.extend(self.get_summaries())
+
+		#Generate and add graphs as necessary
+		elements.extend(self.get_graphs())
 
 		#Create and save the file.
 		doc = SimpleDocTemplate(self.filename)

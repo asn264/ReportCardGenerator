@@ -6,9 +6,9 @@ from school import *
 import matplotlib.pyplot as plt
 import warnings
 
-class InvalidComparison(Exception):
+class InvalidComparisonError(Exception):
 
-	'''This exception is raised when you try to do a comparison report for only one school'''
+	'''This exception is raised when you try to create a graph generator for only one school'''
 
 	def __str__(self):
 		return "Cannot compare a school to itself!"
@@ -16,12 +16,13 @@ class InvalidComparison(Exception):
 class GraphGenerator(object):
 	'''Each instance of this object consists of a list of school objects that we want to compare by generating graphs'''
 
-	def __init__(self, mode, schools):
+	def __init__(self, schools):
 		if len(schools) > 1:
 			self.schools = schools
 			self.names =[str(school) for school in schools]
 		else:
-			raise InvalidComparison
+			raise InvalidComparisonError
+
 	"""
 	def write_report(self):
 		'''writes a comparison report by calling all of the relevant plotting functions'''
