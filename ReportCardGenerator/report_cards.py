@@ -11,6 +11,7 @@ from location import *
 from top10 import *
 from filename import *
 from comparison_writer import *
+from summary_writer import *
 
 #import necessary libraries
 import sys
@@ -33,6 +34,7 @@ def main():
 		
 
 	else:
+
 		#Prompts user to enter a list of school names to build a report
 		schools = get_schools_by_name()
 
@@ -42,13 +44,19 @@ def main():
 	filename = get_filename()
 
 	#Create a PDF report 
-	#writer = SummaryWriter(filename, mode, schools, user_parameters)
-	#writer.write_report()
 	try:
-		writer = ComparisonWriter(mode,schools)
+
+		writer = SummaryWriter(filename, mode, schools, user_parameters)
 		writer.write_report()
-	except InvalidComparisonWriter:
-		print "\nComparison statistics cannot be generated for 1 school. The individual report is being generated."
+
+	except InvalidSummaryWriterError:
+		print "Something went wrong."
+	
+	#try:
+	#	writer = ComparisonWriter(mode,schools)
+	#	writer.write_report()
+	#except InvalidComparisonWriter:
+	#	print "\nComparison statistics cannot be generated for 1 school. The individual report is being generated."
 		
 	
 #Run the program
