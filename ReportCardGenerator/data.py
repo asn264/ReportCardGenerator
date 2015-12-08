@@ -4,9 +4,11 @@ This module contains a function and code used to load the necessary data from da
 Then, they are all merged into one single database based on the unique school identification number (dbn).
 An additional column which contains the coordinates of the address is calculated and added."""
 
-
+#import necessary libraries
 import pandas as pd
 import numpy as np
+
+#import Google API for geopy which validates addresses/coordinates
 from geopy.geocoders import GoogleV3
 
 def loadDataframe(filename,relevant,columns,nullValues):
@@ -31,6 +33,7 @@ def loadDataframe(filename,relevant,columns,nullValues):
 
 nullValues=['s','.','N/A']
 
+#load dataframes from each of our 4 data sources
 schools = loadDataframe('data/DOE_High_School_Directory_2014-2015.csv',True,['dbn','school_name','primary_address_line_1','city'],nullValues)
 
 sat_scores = loadDataframe('data/SAT_Results.csv',False,'school name',nullValues)
@@ -40,6 +43,7 @@ regents_performance = regents_performance[regents_performance['demographic'] == 
 regents_performance.drop(['demographic'],axis=1,inplace=True)
 
 school_performance = loadDataframe('data/DOE_High_School_Performance-Directory_2014-2015.csv',False,['quality_review_rating','quality_review_year','ontrack_year1_historic_avg_similar_schls','graduation_rate_historic_avg_similar_schls','college_career_rate_historic_avg_similar_schls','student_satisfaction_historic_avg_similar_schls'],nullValues)
+
 
 #do a left join on the tables starting with school, on the dbn column which uniquely identifies the school
 dfs = [schools,sat_scores,regents_performance,school_performance]

@@ -1,3 +1,8 @@
+#import modules/classes
+from utilities import *
+from school import *
+
+#import necessary libraries
 import pandas as pd
 import sys
 
@@ -5,10 +10,6 @@ import sys
 from geopy import geocoders
 from geopy.distance import vincenty
 from geopy.exc import GeocoderTimedOut, GeocoderParseError, GeocoderQueryError, GeocoderQuotaExceeded, GeocoderUnavailable
-
-#import other modules/classes
-from utilities import *
-from school import *
 
 
 def get_schools_by_location():
@@ -66,7 +67,7 @@ def sort_schools_by_distance(names,distances):
 
 
 def prompt_for_location():
-	'''Asks the user to provide a location. Accepts KeyboardInterrupt and EOFError.'''
+	'''Asks the user to provide a location'''
 
 	return raw_input("\nEnter an address or a set of coordinates: ")
 
@@ -130,7 +131,7 @@ def get_location():
 	
 
 def prompt_for_radius():
-	'''Asks the user to provide a positive-valued radius. Accepts KeyboardInterrupt and EOFError.'''
+	'''Asks the user to provide a positive-valued radius'''
 
 	return raw_input("\nEnter a radius: ")
 

@@ -1,10 +1,11 @@
-#import relevant modules/classes
+#import modules/classes
 from school import *
 from utilities import *
 
 #import libraries used
 import sys
 import numpy as np
+
 
 #array containing valid features that the user can choose from to create a top 10 ranking
 valid_features = ['Number of SAT Test Takers','SAT Critical Reading Avg',
@@ -15,6 +16,7 @@ valid_features = ['Number of SAT Test Takers','SAT Critical Reading Avg',
 
 #array containing weights that are accepted by the program
 valid_weights = np.arange(1,101)
+
 
 def prompt_for_initial_feature():
 	'''prompts the user to input a feature along with an integer weight between 1 and 100, separated by a comma'''
@@ -110,6 +112,7 @@ def get_top10_schools():
 def calculate_top10(features,weights):
 	'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
 
+	#create local copy of our database
 	database_copy = school_database.copy()
 
 	#normalize data

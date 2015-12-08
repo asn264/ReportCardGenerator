@@ -4,12 +4,15 @@ Created: November 13 2015
 
 '''
 
+#import modules/classes
 from mode import *
 from names import *
 from location import *
 from top10 import *
 from filename import *
 from comparison_writer import *
+
+#import necessary libraries
 import sys
 
 
