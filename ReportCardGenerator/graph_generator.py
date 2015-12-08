@@ -1,31 +1,33 @@
+#import modules/classes
 from utilities import *
 from school import *
 
+#import necessary libraries
 import matplotlib.pyplot as plt
 import warnings
 
-class InvalidComparisonWriter(Exception):
+class InvalidComparison(Exception):
 
 	'''This exception is raised when you try to do a comparison report for only one school'''
 
 	def __str__(self):
 		return "Cannot compare a school to itself!"
 
-class ComparisonWriter(object):
-	'''Each instance of this object will create a single PDF file that contains aggregated summary statistics for all schools in the attribute list schools.'''
+class GraphGenerator(object):
+	'''Each instance of this object consists of a list of school objects that we want to compare by generating graphs'''
 
 	def __init__(self, mode, schools):
 		if len(schools) > 1:
 			self.schools = schools
 			self.names =[str(school) for school in schools]
 		else:
-			raise InvalidComparisonWriter
-
+			raise InvalidComparison
+	"""
 	def write_report(self):
 		'''writes a comparison report by calling all of the relevant plotting functions'''
 
 		self.student_satisfaction_bar_plots()
-		pass
+		pass"""
 		
 
 	def sat_score_boxplots(self):
