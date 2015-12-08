@@ -26,8 +26,8 @@ class GraphGenerator(object):
 			script_dir = os.path.dirname(__file__)
 			plots_dir = os.path.join(script_dir, 'Plots/')
 
-			if not os.path.isdir(results_dir):
-				os.makedirs(results_dir)
+			if not os.path.isdir(plots_dir):
+				os.makedirs(plots_dir)
 
 		else:
 			raise InvalidComparisonError

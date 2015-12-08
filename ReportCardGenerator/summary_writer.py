@@ -313,11 +313,11 @@ class SummaryWriter(object):
 
 
 		#Don't do bar plots (comparisons) if there are more than 20
-		if length(self.schools) <= 20:
+		if len(self.schools) <= 20:
 			pass
 
 		#Don't do distributions if there are less than 5
-		if length(self.schools) >= 5:
+		if len(self.schools) >= 5:
 
 			#This returns a filename for the .png
 			graphs.append(Image(self.graph_generator.create_sat_score_boxplots()))
