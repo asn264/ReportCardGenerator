@@ -17,10 +17,14 @@ class InvalidComparisonError(Exception):
 class GraphGenerator(object):
 	'''Each instance of this object consists of a list of school objects that we want to compare by generating graphs'''
 
-	def __init__(self, schools):
+	def __init__(self, schools,defaultPageSize):
 		if len(schools) > 1:
 			self.schools = schools
 			self.names =[str(school) for school in schools]
+
+			#convert from pixels to inches (80 pixels to an inch)
+			self.page_width = defaultPageSize[0]/80
+			self.page_height = defaultPageSize[1]/80
 
 			#create directory to save plots
 			script_dir = os.path.dirname(__file__)
@@ -43,7 +47,9 @@ class GraphGenerator(object):
 			section_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT '+section+' Avg']
 			data.append(section_data)
 
-		plt.figure()
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+		
 		plt.boxplot(data)
 
 		#set xticks for each section, with the section name
@@ -70,6 +76,9 @@ class GraphGenerator(object):
 		math_data = math_data.dropna()
 		reading_data = reading_data.dropna()
 		writing_data = writing_data.dropna()
+
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
 
 		#create a bar for each month
 		bar_width = 0.2
@@ -104,6 +113,9 @@ class GraphGenerator(object):
 		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
 
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
 		#dynamically set number of bins based on number of schools
 		plt.hist(data.dropna(),bins=max(10,int(len(self.names)/10)))
 
@@ -124,6 +136,9 @@ class GraphGenerator(object):
 		#get data for the number of test takers
 		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.dropna()
+
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
 
 		plt.bar(np.arange(len(data)),data,align='center')
 		plt.xlabel('Schools')
@@ -155,7 +170,9 @@ class GraphGenerator(object):
 			month_data = school_database.loc[school_database['school_name'].isin(self.names)]['Regents Pass Rate - '+month]
 			data.append(month_data)
 
-		plt.figure()
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
 		plt.boxplot(data)
 
 		#set xticks for each section, with the section name
@@ -180,6 +197,9 @@ class GraphGenerator(object):
 		august_data = school_database.loc[school_database['school_name'].isin(self.names)]['Regents Pass Rate - August']
 		june_data = june_data.dropna()
 		august_data = august_data.dropna()
+
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
 
 		#create a bar for each month
 		bar_width = 0.35
@@ -221,7 +241,9 @@ class GraphGenerator(object):
 				data.append(category_data)
 				tick_labels.append(category + ' - '+year)
 
-		plt.figure()
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.6))
+
 		plt.boxplot(data)
 
 		#set xticks for each section, with the section name
@@ -269,6 +291,9 @@ class GraphGenerator(object):
 			#clear plot
 			plt.clf()
 
+			#set size of figure
+			plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
 			#create a bar for each category
 			bar_width = 0.2
 			rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Graduation Ontrack')
@@ -306,7 +331,9 @@ class GraphGenerator(object):
 			year_data = school_database.loc[school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - '+year]
 			data.append(year_data)
 
-		plt.figure()
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
 		plt.boxplot(data)
 
 		#set xticks for each section, with the section name
@@ -339,6 +366,9 @@ class GraphGenerator(object):
 		data_2012 = data_2012.drop(rows_to_drop)
 		data_2013 = data_2013.drop(rows_to_drop)
 
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
 		#create a bar for each month
 		bar_width = 0.35
 		rects1 = plt.bar(np.arange(len(data_2012)), data_2012, bar_width,color='b',label='2012')
@@ -346,7 +376,7 @@ class GraphGenerator(object):
 
 		#set labels, titles, and ticks with school names
 		plt.xlabel('Schools')
-		plt.ylabel('Satisfaction (out of 10')
+		plt.ylabel('Satisfaction (out of 10)')
 		plt.title('Student Satisfaction by School')
 		plt.xticks(np.arange(len(data_2012)) + bar_width, self.names,fontsize=8)
 		plt.xticks(rotation=90)
