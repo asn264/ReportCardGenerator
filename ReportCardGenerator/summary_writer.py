@@ -44,7 +44,7 @@ class SummaryWriter(object):
  			'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
  			
  			try:
- 				self.graph_generator = GraphGenerator(self.schools)
+ 				self.graph_generator = GraphGenerator(self.schools, defaultPageSize)
  			except InvalidComparisonError:
  				pass
 
@@ -311,18 +311,26 @@ class SummaryWriter(object):
 
 		graphs = []
 
-
 		#Don't do bar plots (comparisons) if there are more than 20
 		if len(self.schools) <= 20:
-			pass
+			graphs.append(Image(self.graph_generator.create_sat_score_bar_plot()))
+			graphs.append(Image(self.graph_generator.create_sat_test_takers_bar_plot()))
+			graphs.append(Image(self.graph_generator.create_regents_bar_plot()))
+			graphs.append(Image(self.graph_generator.create_graduation_and_college_bar_plots()))
+			graphs.append(Image(self.graph_generator.create_student_satisfaction_bar_plots()))
 
 		#Don't do distributions if there are less than 5
 		if len(self.schools) >= 5:
 
-			#This returns a filename for the .png
+			#The graph generator create_ functions return a local filepath to the png files containing the plots
 			graphs.append(Image(self.graph_generator.create_sat_score_boxplots()))
-			#Probably want to add spacers
+			graphs.append(Image(self.graph_generator.create_sat_test_takers_histogram()))
+			graphs.append(Image(self.graph_generator.create_regents_box_plots()))
+			graphs.append(Image(self.graph_generator.create_graduation_and_college_box_plots()))
+			graphs.append(Image(self.graph_generator.create_student_satisfaction_box_plots()))
 
+
+		#Probably want to add spacers and headings3
 			
 		return graphs
 
