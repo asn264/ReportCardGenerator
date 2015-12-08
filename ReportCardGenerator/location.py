@@ -68,7 +68,7 @@ def sort_schools_by_distance(names,distances):
 def prompt_for_location():
 	'''Asks the user to provide a location. Accepts KeyboardInterrupt and EOFError.'''
 
-	return raw_input("Enter an address or a set of coordinates: ")
+	return raw_input("\nEnter an address or a set of coordinates: ")
 
 
 def validate_location(input):
@@ -94,28 +94,28 @@ def validate_location(input):
 					return (place.latitude, place.longitude),input
 
 			#This code gets executed if there is no match in str for any of the cities in the database.
-			print "The location is not in the New York City area."
+			print "\nThe location is not in the New York City area."
 			return None
 
 		#AttributeError occurs if the service could not find a best-match place for the string and place = None.
 		except (AttributeError,UnicodeEncodeError):
-			print "Invalid location."
+			print "\nInvalid location."
 			return None
 		#The following errors all pertain to errors with GeoPy and Google's geocoding service. 
 		except GeocoderTimedOut:
-			print "Remote geocoding service timed out. Try again or enter another location."
+			print "\nRemote geocoding service timed out. Try again or enter another location."
 			return None
 		except GeocoderParseError:
-			print "Geopy could not parse service's response. Try again or enter another location."
+			print "\nGeopy could not parse service's response. Try again or enter another location."
 			return None
 		except GeocoderQueryError:
-			print "Geopy detected a bad request. Try again or enter another location."
+			print "\nGeopy detected a bad request. Try again or enter another location."
 			return None
 		except GeocoderQuotaExceeded: 
-			print "You have exceeded your quota for requests to the geocoding service."
+			print "\nYou have exceeded your quota for requests to the geocoding service."
 			return None
 		except GeocoderUnavailable:
-			print "Remote geocoding service is unavailable. Try again or enter another location."
+			print "\nRemote geocoding service is unavailable. Try again or enter another location."
 			return None
 
 
@@ -132,7 +132,7 @@ def get_location():
 def prompt_for_radius():
 	'''Asks the user to provide a positive-valued radius. Accepts KeyboardInterrupt and EOFError.'''
 
-	return raw_input("Enter a radius: ")
+	return raw_input("\nEnter a radius: ")
 
 
 def validate_radius(input):
@@ -167,7 +167,7 @@ def get_radius():
 	if rad is not None:
 		return rad
 	else:
-		print "Invalid radius."
+		print "\nInvalid radius."
 		return get_radius()
 
 
@@ -175,13 +175,13 @@ def get_radius():
 def no_schools():
 	'''Alerts the user when no schools are found within the distance of the given location'''
 
-	print "There were no schools found within the radius you specified of the input location."
+	print "\nThere were no schools found within the radius you specified of the input location."
 
 	
 def prompt_for_number(length):
 	'''Asks for the number of schools the user wants.'''
 
-	return raw_input("There are "+str(length)+" schools in this radius.\nHow many of the closest schools do you want to generate a report of? ")
+	return raw_input("\nThere are "+str(length)+" schools in this radius.\nHow many of the closest schools do you want to generate a report of? ")
 
 
 def validate_number(input,length):
@@ -206,5 +206,5 @@ def get_number(length):
 	if number is not None:
 		return number
 	else:
-		print "Invalid number."
+		print "\nInvalid number."
 		return get_number(length)

@@ -41,9 +41,11 @@ def main():
 	#Create a PDF report 
 	#writer = SummaryWriter(filename, mode, schools, user_parameters)
 	#writer.write_report()
-
-	writer = ComparisonWriter(mode,schools)
-	writer.write_report()
+	try:
+		writer = ComparisonWriter(mode,schools)
+		writer.write_report()
+	except InvalidComparisonWriter:
+		print "\nComparison statistics cannot be generated for 1 school. The individual report is being generated."
 		
 	
 #Run the program
