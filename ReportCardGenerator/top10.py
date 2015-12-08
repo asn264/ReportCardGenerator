@@ -26,7 +26,7 @@ def prompt_for_initial_feature():
 def prompt_for_additional_feature():
 	'''prompts the user to input another feature along with an integer weight between 1 and 100, separated by a comma'''
 
-	return raw_input("\nEnter another feature followed by an integer weight between 1 and 100, separated by a comma. Type finish to calculate the top 10: ")
+	return raw_input("\nEnter another feature followed by an integer weight between 1 and 100, separated by a comma. \nType finish to calculate the top 10: ")
 
 
 def validate_feature(input,current_features):
@@ -52,11 +52,13 @@ def validate_feature(input,current_features):
 
 		feature,weight = split_input
 
-		if feature not in valid_features:
+		#check that the feature is a valid feature, ignoring case
+		if feature.lower() not in [x.lower() for x in valid_features]:
 			print "\nInvalid feature"
 			return None
 
-		if feature in current_features: #check that a feature isn't being repeated
+		#check that a feature isn't being repeated, ignoring case
+		if feature.lower() in [x.lower() for x in current_features]:
 			print "\nWe already have a weight for that feature"
 			return None
 
@@ -99,6 +101,9 @@ def get_top10_schools():
 	'''gets valid features and weights from the user and then finds the 10 schools with the highest score
 	with respect to the features and weights given. A list of the 10 school objects is returned'''
 
+	print "\nThe following features are available to create a ranking metric: "
+	print valid_features
+
 	features,weights = get_features()
 	names,scores = calculate_top10(features,weights)
 
@@ -118,10 +123,13 @@ def calculate_top10(features,weights):
 	#normalize data
 	database_copy[valid_features] = database_copy[valid_features].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
 
+	#change column names to lowercase
+	database_copy.columns = [x.lower() for x in database_copy.columns]
+
 	#compute score of each school
 	database_copy['score']=0
 	for i in range(0,len(features)):
-		database_copy['score']+=database_copy[features[i]]*weights[i]
+		database_copy['score']+=database_copy[features[i].lower()]*weights[i]
 
 	#sort by score
 	database_copy.sort('score',ascending=False,inplace=True)

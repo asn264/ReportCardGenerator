@@ -9,7 +9,7 @@ import os.path
 def prompt_for_filename():
 
 	'''Asks the user to choose a filename.'''
-	return raw_input("\nPlease enter a filename for your report using only alphanumeric characters and/or underscores. Entering \"report\" will generate the file \"report.pdf\".")
+	return raw_input("\nPlease enter a filename for your report using only alphanumeric characters and/or underscores. \nEntering \"report\" will generate the file \"report.pdf\". ")
 
 
 def check_filename_exists(user_input):
