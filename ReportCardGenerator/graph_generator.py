@@ -66,6 +66,28 @@ class GraphGenerator(object):
 
 		return 'Plots/'+filename+'.png'
 
+
+	def get_bar_plots(self):
+
+		'''For neatness, we only want barplots to show at most 15 schools so we split the plotting data as necessary.'''
+		min_schools_in_plot = 5
+		max_schools_in_plot = 15
+
+		if len(self.schools) <= max_schools_in_plot:
+			#plot everything
+
+		#Returns an integer indicating how many things are in each bar plot (except possibly the last one)
+		else:
+			schools_to_plot = self.schools
+			#Take out 15 at a time as long as there is at least 5 other elements in the list
+			while len(schools_to_plot) >= max_schools_in_plot+min_schools_in_plot:
+				self.create_sat_score_bar_plot([0,15])
+				schools_to_plot = schools_to_plot[15:]
+
+			#plot the remainder (5 or more)
+
+
+
 	def create_sat_score_bar_plot(self):
 		'''saves a bar plot of the SAT scores by section for each school'''
 

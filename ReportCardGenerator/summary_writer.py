@@ -40,11 +40,15 @@ class SummaryWriter(object):
 			self.schools = schools
 			self.mode = mode
 			self.performance_params = valid_features
+			self.add_visualization_warning = False
  			
  			try:
  				self.graph_generator = GraphGenerator(school_database,self.schools, defaultPageSize)
+
+ 			#This is raised when len(self.schools) is 1
  			except InvalidComparisonError:
- 				pass
+ 				#Add a note to title page warning that there are no visualizations when len(self.schools) is 1
+ 				self.add_visualization_warning = True
 
 			#Only name mode requires no user parameters. Raise an exception in other cases.
 			if len(user_params) == 0:
@@ -311,6 +315,9 @@ class SummaryWriter(object):
 
 		#Don't do bar plots (comparisons) if there are more than 20
 		if len(self.schools) <= 20:
+
+			graphs.append([Image(png_file) for png_file in create_sat_score_boxplots()])
+
 			graphs.append(Image(self.graph_generator.create_sat_score_bar_plot()))
 			graphs.append(Image(self.graph_generator.create_sat_test_takers_bar_plot()))
 			graphs.append(Image(self.graph_generator.create_regents_bar_plot()))
