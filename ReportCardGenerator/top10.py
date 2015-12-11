@@ -7,134 +7,136 @@ import sys
 import numpy as np
 
 
-#array containing valid features that the user can choose from to create a top 10 ranking
-valid_features = ['Number of SAT Test Takers','SAT Critical Reading Avg',
-'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
- 'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013',
- 'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
- 'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
+class Top10_Toolkit(object):
 
-#array containing weights that are accepted by the program
-valid_weights = np.arange(1,101)
+	def __init__(self, school_database, school_names, valid_features):
+		'''create instance of top10 mode, instance variables contain the relevant data'''
 
+		self.school_database = school_database
+		self.school_names = school_names
+		self.valid_features = valid_features
 
-def prompt_for_initial_feature():
-	'''prompts the user to input a feature along with an integer weight between 1 and 100, separated by a comma'''
+	@staticmethod
+	def prompt_for_initial_feature():
+		'''prompts the user to input a feature along with an integer weight between 1 and 100, separated by a comma'''
 
-	return raw_input("\nEnter a feature followed by an integer weight between 1 and 100, separated by a comma: ")
+		return raw_input("\nEnter a feature followed by an integer weight between 1 and 100, separated by a comma: ")
 
-def prompt_for_additional_feature():
-	'''prompts the user to input another feature along with an integer weight between 1 and 100, separated by a comma'''
+	@staticmethod
+	def prompt_for_additional_feature():
+		'''prompts the user to input another feature along with an integer weight between 1 and 100, separated by a comma'''
 
-	return raw_input("\nEnter another feature followed by an integer weight between 1 and 100, separated by a comma. \nType finish to calculate the top 10: ")
-
-
-def validate_feature(input,current_features):
-	'''validates user input of a feature and a weight'''
-
-	if input.strip().lower() == 'quit':
-		sys.exit()
-	else:
-		if input.strip().lower() == 'finish':
-			if len(current_features) == 0: #if the user tries to calculate the top 10 without having input any valid features
-				print "\nNeed to have at least one valid feature to calculate the top 10 schools."
-				return None
-			else:
-				#signal that we have a valid list of features and weights, and we are ready to calculate the top 10
-				return -1
+		return raw_input("\nEnter another feature followed by an integer weight between 1 and 100, separated by a comma. \nType finish to calculate the top 10: ")
 
 
-		split_input = input.split(",")
+	def validate_feature(self,input,current_features):
+		'''validates user input of a feature and a weight'''
 
-		if len(split_input) != 2:
-			print "\nInput does not consist of two parameters."
-			return None
-
-		feature,weight = split_input
-
-		#check that the feature is a valid feature, ignoring case
-		if feature.lower() not in [x.lower() for x in valid_features]:
-			print "\nInvalid feature"
-			return None
-
-		#check that a feature isn't being repeated, ignoring case
-		if feature.lower() in [x.lower() for x in current_features]:
-			print "\nWe already have a weight for that feature"
-			return None
-
-		try: #check that the weight is an integer
-			weight = int(weight)
-		except ValueError:
-			print "\nWeight must be an integer"
-			return None
-
-		if int(weight) not in valid_weights:
-			print "\nInvalid weight"
-			return None
-
-		return [feature,int(weight)]
-
-def get_features():
-	'''creates a list of valid features and valid weights by prompting the user for them and validating them'''
-
-	features=[]
-	weights=[]
-	
-	feature_weight_pair = validate_feature(prompt_for_initial_feature(),features)
-
-	#while the user has not typed finish, which is signaled by a -1, we prompt for additional features/weights
-	while feature_weight_pair!=-1:
-		if feature_weight_pair is not None: #if both the feature and weight are valid
-			feature,weight=feature_weight_pair
-			#append feature and weight
-			features.append(feature)
-			weights.append(weight)
-
-		if len(features)==0:
-			feature_weight_pair = validate_feature(prompt_for_initial_feature(),features)
+		if input.strip().lower() == 'quit':
+			sys.exit()
 		else:
-			feature_weight_pair = validate_feature(prompt_for_additional_feature(),features)
+			if input.strip().lower() == 'finish':
+				if len(current_features) == 0: #if the user tries to calculate the top 10 without having input any valid features
+					print "\nNeed to have at least one valid feature to calculate the top 10 schools."
+					return None
+				else:
+					#signal that we have a valid list of features and weights, and we are ready to calculate the top 10
+					return -1
 
-	return features,weights
 
-def get_top10_schools():
-	'''gets valid features and weights from the user and then finds the 10 schools with the highest score
-	with respect to the features and weights given. A list of the 10 school objects is returned'''
+			split_input = input.split(",")
 
-	print "\nThe following features are available to create a ranking metric: "
-	print valid_features
+			if len(split_input) != 2:
+				print "\nInput does not consist of two parameters."
+				return None
 
-	features,weights = get_features()
-	names,scores = calculate_top10(features,weights)
+			feature,weight = split_input
 
-	#instantiate each school object and store all of the schools we want in a list
-	schools=[]
-	for name in names:
-		schools.append(School(name))
+			#check that the feature is a valid feature, ignoring case
+			if feature.lower() not in [x.lower() for x in self.valid_features]:
+				print "\nInvalid feature"
+				return None
 
-	return schools,[features,weights,scores]
+			#check that a feature isn't being repeated, ignoring case
+			if feature.lower() in [x.lower() for x in current_features]:
+				print "\nWe already have a weight for that feature"
+				return None
 
-def calculate_top10(features,weights):
-	'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
+			try: #check that the weight is an integer
+				weight = int(weight)
+			except ValueError:
+				print "\nWeight must be an integer"
+				return None
 
-	#create local copy of our database
-	database_copy = school_database.copy()
+			#valid weights are integers between 1 and 100
+			if int(weight) not in np.arange(1,101):
+				print "\nInvalid weight"
+				return None
 
-	#normalize data
-	database_copy[valid_features] = database_copy[valid_features].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
+			return [feature,int(weight)]
 
-	#change column names to lowercase
-	database_copy.columns = [x.lower() for x in database_copy.columns]
+	def get_features(self):
+		'''creates a list of valid features and valid weights by prompting the user for them and validating them'''
 
-	#compute score of each school
-	database_copy['score']=0
-	for i in range(0,len(features)):
-		database_copy['score']+=database_copy[features[i].lower()]*weights[i]
+		features=[]
+		weights=[]
+		
+		feature_weight_pair = self.validate_feature(self.prompt_for_initial_feature(),features)
 
-	#sort by score
-	database_copy.sort('score',ascending=False,inplace=True)
+		#while the user has not typed finish, which is signaled by a -1, we prompt for additional features/weights
+		while feature_weight_pair!=-1:
+			if feature_weight_pair is not None: #if both the feature and weight are valid
+				feature,weight=feature_weight_pair
 
-	#return the names and scores of the top 10 schools
-	return database_copy['school_name'][:10].tolist(),database_copy['score'][:10].tolist()
+				#append feature and weight
+				features.append(feature)
+				weights.append(weight)
+
+			if len(features)==0:
+				feature_weight_pair = self.validate_feature(self.prompt_for_initial_feature(),features)
+			else:
+				feature_weight_pair = self.validate_feature(self.prompt_for_additional_feature(),features)
+
+		return features,weights
+
+	def get_top10_schools(self):
+		'''gets valid features and weights from the user and then finds the 10 schools with the highest score
+		with respect to the features and weights given. A list of the 10 school objects is returned'''
+
+		print "\nThe following features are available to create a ranking metric: "
+		print self.valid_features
+
+		features,weights = self.get_features()
+		names,scores = self.calculate_top10(features,weights)
+
+		#instantiate each school object and store all of the schools we want in a list
+		schools=[]
+		for name in names:
+			schools.append(School(self.school_database,self.school_names,name))
+
+		return schools,[features,weights,scores]
+
+	def calculate_top10(self,features,weights):
+		'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
+
+		#create local copy of our database
+		database_copy = self.school_database.copy()
+
+		#normalize data
+		database_copy[self.valid_features] = database_copy[self.valid_features].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
+
+		#change column names to lowercase
+		database_copy.columns = [x.lower() for x in database_copy.columns]
+
+		#compute score of each school
+		database_copy['score']=0
+		for i in range(0,len(features)):
+			database_copy['score']+=database_copy[features[i].lower()]*weights[i]
+
+		#sort by score
+		database_copy.sort('score',ascending=False,inplace=True)
+
+		#return the names and scores of the top 10 schools
+		return database_copy['school_name'][:10].tolist(),database_copy['score'][:10].tolist()
 
 

@@ -1,5 +1,4 @@
 #import modules/classes
-from utilities import *
 from school import *
 
 #import necessary libraries
@@ -17,8 +16,9 @@ class InvalidComparisonError(Exception):
 class GraphGenerator(object):
 	'''Each instance of this object consists of a list of school objects that we want to compare by generating graphs'''
 
-	def __init__(self, schools,defaultPageSize):
+	def __init__(self, school_database, schools, defaultPageSize):
 		if len(schools) > 1:
+			self.school_database = school_database
 			self.schools = schools
 			self.names =[str(school) for school in schools]
 
@@ -44,7 +44,7 @@ class GraphGenerator(object):
 
 		#append data from each section of the SAT
 		for section in sections:
-			section_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT '+section+' Avg']
+			section_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT '+section+' Avg']
 			data.append(section_data)
 
 		#set size of figure
@@ -70,9 +70,9 @@ class GraphGenerator(object):
 		'''saves a bar plot of the SAT scores by section for each school'''
 
 		#get SAT score data for each section
-		math_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT Math Avg']
-		reading_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT Critical Reading Avg']
-		writing_data = school_database.loc[school_database['school_name'].isin(self.names)]['SAT Writing Avg']
+		math_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT Math Avg']
+		reading_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT Critical Reading Avg']
+		writing_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT Writing Avg']
 		math_data = math_data.dropna()
 		reading_data = reading_data.dropna()
 		writing_data = writing_data.dropna()
@@ -110,7 +110,7 @@ class GraphGenerator(object):
 		'''saves a histogram showing the distribution of the number of SAT test takers'''
 		
 		#get data for the number of test takers
-		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
+		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
 
 		#set size of figure
@@ -134,7 +134,7 @@ class GraphGenerator(object):
 		'''saves a bar plot of the number of students who took the SAT by school'''
 
 		#get data for the number of test takers
-		data = school_database.loc[school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
+		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.dropna()
 
 		#set size of figure
@@ -167,7 +167,7 @@ class GraphGenerator(object):
 
 		#append data from each month of the Regents data
 		for month in months:
-			month_data = school_database.loc[school_database['school_name'].isin(self.names)]['Regents Pass Rate - '+month]
+			month_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Regents Pass Rate - '+month]
 			data.append(month_data)
 
 		#set size of figure
@@ -193,8 +193,8 @@ class GraphGenerator(object):
 		'''saves a bar plot of the % of students that passed the Regents exam in June and August'''
 
 		#get Regents data for each month
-		june_data = school_database.loc[school_database['school_name'].isin(self.names)]['Regents Pass Rate - June']
-		august_data = school_database.loc[school_database['school_name'].isin(self.names)]['Regents Pass Rate - August']
+		june_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Regents Pass Rate - June']
+		august_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Regents Pass Rate - August']
 		june_data = june_data.dropna()
 		august_data = august_data.dropna()
 
@@ -237,7 +237,7 @@ class GraphGenerator(object):
 		#append data from each category
 		for category in categories:
 			for year in years:
-				category_data = school_database.loc[school_database['school_name'].isin(self.names)][category + ' Rate - ' + year]
+				category_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)][category + ' Rate - ' + year]
 				data.append(category_data)
 				tick_labels.append(category + ' - '+year)
 
@@ -274,9 +274,9 @@ class GraphGenerator(object):
 		#make bar plot for each year
 		for year in years:
 			#get the student rates for each category
-			ontrack_data = school_database.loc[school_database['school_name'].isin(self.names)]['Graduation Ontrack Rate - '+year]
-			graduation_data = school_database.loc[school_database['school_name'].isin(self.names)]['Graduation Rate - '+year]
-			college_data = school_database.loc[school_database['school_name'].isin(self.names)]['College Career Rate - '+year]
+			ontrack_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Graduation Ontrack Rate - '+year]
+			graduation_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Graduation Rate - '+year]
+			college_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['College Career Rate - '+year]
 
 			#drop schools that have any of the the three rates missing
 			rows_to_drop=[]
@@ -328,7 +328,7 @@ class GraphGenerator(object):
 
 		#append data from each month of the Regents data
 		for year in years:
-			year_data = school_database.loc[school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - '+year]
+			year_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - '+year]
 			data.append(year_data)
 
 		#set size of figure
@@ -354,8 +354,8 @@ class GraphGenerator(object):
 		'''saves a bar plot of the student satisfaction scores by school'''
 
 		#get Regents data for each month
-		data_2012 = school_database.loc[school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2012']
-		data_2013 = school_database.loc[school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2013']
+		data_2012 = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2012']
+		data_2013 = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2013']
 
 		#drop schools that have any of the the two years missing
 		rows_to_drop=[]

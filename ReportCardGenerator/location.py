@@ -12,200 +12,206 @@ from geopy.distance import vincenty
 from geopy.exc import GeocoderTimedOut, GeocoderParseError, GeocoderQueryError, GeocoderQuotaExceeded, GeocoderUnavailable
 
 
-def get_schools_by_location():
-	'''uses helper functions in the location module to prompt the user for a location and radius, 
-	and the number of schools within that radius to generate a report of. A list of school objects is returned'''
+class Location_Toolkit(object):
 
-	#Get location from the user
-	location,input_location = get_location()
+	def __init__(self, school_database, school_names):
+		'''create instance of top10 mode, instance variables contain the relevant data'''
 
-	#Get all schools within the input radius of the specified location
-	names,input_radius = find_schools_in_radius(location,get_radius())
-
-	while len(names)==0:
-		no_schools()
-		names,input_radius = find_schools_in_radius(location,get_radius())
-
-	#Get the number of schools the user wants to generate reports of
-	num = get_number(len(names))
-	#Only use the closest schools
-	names=names[:num]
-
-	#instantiate each school object and store all of the schools we want in a list
-	schools=[]
-	for name in names:
-		schools.append(School(name))
-
-	return schools,[input_location,input_radius]
+		self.school_database = school_database
+		self.school_names = school_names
+		self.cities = pd.unique(school_database['city'].values.ravel())
 
 
-def find_schools_in_radius(coordinates,radius):
-	'''function that returns the names of all schools within a specified radius of a location, sorted by distance'''
+	def get_schools_by_location(self):
+		'''uses helper functions in the location module to prompt the user for a location and radius, 
+		and the number of schools within that radius to generate a report of. A list of school objects is returned'''
 
-	names=[]
-	distances=[]
-	for row in range(len(school_database)):
-		#calculate vincenty distance in miles
-		distance = vincenty(coordinates,school_database.iloc[row]['coordinates']).miles
+		#Get location from the user
+		location,input_location = self.get_location()
+
+		#Get all schools within the input radius of the specified location
+		names,input_radius = self.find_schools_in_radius(location,self.get_radius())
+
+		while len(names)==0:
+			self.no_schools()
+			names,input_radius = self.find_schools_in_radius(location,self.get_radius())
+
+		#Get the number of schools the user wants to generate reports of
+		num = self.get_number(len(names))
+		#Only use the closest schools
+		names=names[:num]
+
+		#instantiate each school object and store all of the schools we want in a list
+		schools=[]
+		for name in names:
+			schools.append(School(self.school_database,self.school_names,name))
+
+		return schools,[input_location,input_radius]
+
+
+	def find_schools_in_radius(self,coordinates,radius):
+		'''function that returns the names of all schools within a specified radius of a location, sorted by distance'''
+
+		names=[]
+		distances=[]
+		for row in range(len(self.school_database)):
+			#calculate vincenty distance in miles
+			distance = vincenty(coordinates,self.school_database.iloc[row]['coordinates']).miles
+			
+			if distance <= radius:
+				names.append(self.school_database.iloc[row]['school_name'])
+				distances.append(distance)
+		return self.sort_schools_by_distance(names,distances),radius
+
+	@staticmethod
+	def sort_schools_by_distance(names,distances):
+		'''modified implementation of bubble sort, sorting names based on distance'''
 		
-		if distance <= radius:
-			names.append(school_database.iloc[row]['school_name'])
-			distances.append(distance)
-	return sort_schools_by_distance(names,distances),radius
-
-
-def sort_schools_by_distance(names,distances):
-	'''modified implementation of bubble sort, sorting names based on distance'''
-	
-	for i in range(len(distances)):
-		for j in range(len(distances)-1-i):
-			if distances[j]>distances[j+1]:
-				distances[j],distances[j+1]=distances[j+1],distances[j]
-				names[j],names[j+1]=names[j+1],names[j]
-	
-	return names
-
-
-def prompt_for_location():
-	'''Asks the user to provide a location'''
-
-	return raw_input("\nEnter an address or a set of coordinates: ")
-
-
-def validate_location(input):
-	'''Makes a best guess of user provided input using Google Maps. 
-	Complains if the (best-guess) city is not a city that appears in the school database.'''
-
-	g = geocoders.GoogleV3()
-
-	if input.strip().lower() == 'quit':
-		sys.exit()
-
-	else:
-
-		cities = pd.unique(school_database['city'].values.ravel())
+		for i in range(len(distances)):
+			for j in range(len(distances)-1-i):
+				if distances[j]>distances[j+1]:
+					distances[j],distances[j+1]=distances[j+1],distances[j]
+					names[j],names[j+1]=names[j+1],names[j]
 		
-		try:
+		return names
 
-			#place.address is in unicode. Cast it as string and split into a list of strings. 
-			place = g.geocode(input, timeout=30)
-			components = str(place.address).split(", ")
-			for c in components:
-				if c in cities:
-					return (place.latitude, place.longitude),input
+	@staticmethod
+	def prompt_for_location():
+		'''Asks the user to provide a location'''
 
-			#This code gets executed if there is no match in str for any of the cities in the database.
-			print "\nThe location is not in the New York City area."
-			return None
-
-		#AttributeError occurs if the service could not find a best-match place for the string and place = None.
-		except (AttributeError,UnicodeEncodeError):
-			print "\nInvalid location."
-			return None
-		#The following errors all pertain to errors with GeoPy and Google's geocoding service. 
-		except GeocoderTimedOut:
-			print "\nRemote geocoding service timed out. Try again or enter another location."
-			return None
-		except GeocoderParseError:
-			print "\nGeopy could not parse service's response. Try again or enter another location."
-			return None
-		except GeocoderQueryError:
-			print "\nGeopy detected a bad request. Try again or enter another location."
-			return None
-		except GeocoderQuotaExceeded: 
-			print "\nYou have exceeded your quota for requests to the geocoding service."
-			return None
-		except GeocoderUnavailable:
-			print "\nRemote geocoding service is unavailable. Try again or enter another location."
-			return None
+		return raw_input("\nEnter an address or a set of coordinates: ")
 
 
-def get_location():
-	'''Recursively asks the user to enter a location and validates it.'''
+	def validate_location(self,input):
+		'''Makes a best guess of user provided input using Google Maps. 
+		Complains if the (best-guess) city is not a city that appears in the school database.'''
 
-	user_location = validate_location(prompt_for_location())
-	if user_location is not None:
-		return user_location
-	else:
-		return get_location()
-	
+		g = geocoders.GoogleV3()
 
-def prompt_for_radius():
-	'''Asks the user to provide a positive-valued radius'''
+		if input.strip().lower() == 'quit':
+			sys.exit()
 
-	return raw_input("\nEnter a radius: ")
-
-
-def validate_radius(input):
-	'''Ensure that the radius is a positive int or float.'''
-
-	if input.lower() == 'quit':
-		sys.exit()
-
-	else:
-
-		try:
-
-			#If no error is raised then str is an int but not necessarily positive.
-			return int(input) if int(input) > 0 else None
-
-		except ValueError:
-
-			#If no error is raised then str is a float but not necessarily positive.
+		else:
+			
 			try:
 
-				return float(input) if float(input) > 0 else None
+				#place.address is in unicode. Cast it as string and split into a list of strings. 
+				place = g.geocode(input, timeout=30)
+				components = str(place.address).split(", ")
+				for c in components:
+					if c in self.cities:
+						return (place.latitude, place.longitude),input
 
-			#This only occurs if str is neither an int nor a float
-			except ValueError:
+				#This code gets executed if there is no match in str for any of the cities in the database.
+				print "\nThe location is not in the New York City area."
 				return None
+
+			#AttributeError occurs if the service could not find a best-match place for the string and place = None.
+			except (AttributeError,UnicodeEncodeError):
+				print "\nInvalid location."
+				return None
+			#The following errors all pertain to errors with GeoPy and Google's geocoding service. 
+			except GeocoderTimedOut:
+				print "\nRemote geocoding service timed out. Try again or enter another location."
+				return None
+			except GeocoderParseError:
+				print "\nGeopy could not parse service's response. Try again or enter another location."
+				return None
+			except GeocoderQueryError:
+				print "\nGeopy detected a bad request. Try again or enter another location."
+				return None
+			except GeocoderQuotaExceeded: 
+				print "\nYou have exceeded your quota for requests to the geocoding service."
+				return None
+			except GeocoderUnavailable:
+				print "\nRemote geocoding service is unavailable. Try again or enter another location."
+				return None
+
+
+	def get_location(self):
+		'''Recursively asks the user to enter a location and validates it.'''
+
+		user_location = self.validate_location(self.prompt_for_location())
+		if user_location is not None:
+			return user_location
+		else:
+			return self.get_location()
 		
+	@staticmethod
+	def prompt_for_radius():
+		'''Asks the user to provide a positive-valued radius'''
 
-def get_radius():
-	'''Recursively asks the user to enter a radius. Only accepts positive numeric values.'''
+		return raw_input("\nEnter a radius: ")
 
-	rad = validate_radius(prompt_for_radius())
-	if rad is not None:
-		return rad
-	else:
-		print "\nInvalid radius."
-		return get_radius()
+	@staticmethod
+	def validate_radius(input):
+		'''Ensure that the radius is a positive int or float.'''
+
+		if input.lower() == 'quit':
+			sys.exit()
+
+		else:
+
+			try:
+
+				#If no error is raised then str is an int but not necessarily positive.
+				return int(input) if int(input) > 0 else None
+
+			except ValueError:
+
+				#If no error is raised then str is a float but not necessarily positive.
+				try:
+
+					return float(input) if float(input) > 0 else None
+
+				#This only occurs if str is neither an int nor a float
+				except ValueError:
+					return None
+			
+	def get_radius(self):
+		'''Recursively asks the user to enter a radius. Only accepts positive numeric values.'''
+
+		rad = self.validate_radius(self.prompt_for_radius())
+		if rad is not None:
+			return rad
+		else:
+			print "\nInvalid radius."
+			return self.get_radius()
 
 
+	@staticmethod
+	def no_schools():
+		'''Alerts the user when no schools are found within the distance of the given location'''
 
-def no_schools():
-	'''Alerts the user when no schools are found within the distance of the given location'''
+		print "\nThere were no schools found within the radius you specified of the input location."
 
-	print "\nThere were no schools found within the radius you specified of the input location."
+	@staticmethod	
+	def prompt_for_number(length):
+		'''Asks for the number of schools the user wants.'''
 
-	
-def prompt_for_number(length):
-	'''Asks for the number of schools the user wants.'''
+		return raw_input("\nThere are "+str(length)+" schools in this radius.\nHow many of the closest schools do you want to generate a report of? ")
 
-	return raw_input("\nThere are "+str(length)+" schools in this radius.\nHow many of the closest schools do you want to generate a report of? ")
+	@staticmethod
+	def validate_number(input,length):
+		'''Ensure that the input is a positive integer not greater than the length of names'''
+		
+		if input.lower() == 'quit':
+			sys.exit()
+		else:
+			try:
+				#validates input
+				return int(input) if (int(input) > 0 and int(input)<=length) else None
+			except ValueError:
+					return None
 
+	def get_number(self,length):
+		'''Recursively asks the user how many of the schools within the radius they want to get a report on. 
+		Verifies that the input is valid'''
 
-def validate_number(input,length):
-	'''Ensure that the input is a positive integer not greater than the length of names'''
-	
-	if input.lower() == 'quit':
-		sys.exit()
-	else:
-		try:
-			#validates input
-			return int(input) if (int(input) > 0 and int(input)<=length) else None
-		except ValueError:
-				return None
+		number = self.validate_number(self.prompt_for_number(length),length)
 
-
-def get_number(length):
-	'''Recursively asks the user how many of the schools within the radius they want to get a report on. 
-	Verifies that the input is valid'''
-
-	number = validate_number(prompt_for_number(length),length)
-
-	if number is not None:
-		return number
-	else:
-		print "\nInvalid number."
-		return get_number(length)
+		if number is not None:
+			return number
+		else:
+			print "\nInvalid number."
+			return self.get_number(length)

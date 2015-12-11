@@ -31,7 +31,7 @@ class SummaryWriter(object):
 	as well as graphs and boxplots using Matplotlib functionality. The PDFs are generated using ReportLab, relying on the Paragraph, Spacer, 
 	and PageBreak flowables.'''
 
-	def __init__(self, filename, mode, schools, user_params = []):
+	def __init__(self, school_database, valid_features, filename, mode, schools, user_params = []):
 
 		if all(isinstance(school, School) for school in schools):
 
@@ -39,12 +39,10 @@ class SummaryWriter(object):
 			self.filename = filename
 			self.schools = schools
 			self.mode = mode
-			self.performance_params = ['Number of SAT Test Takers','SAT Critical Reading Avg', 'SAT Math Avg', 'SAT Writing Avg', 'Regents Pass Rate - June',
- 			'Regents Pass Rate - August', 'Graduation Ontrack Rate - 2013', 'Graduation Rate - 2013', 'College Career Rate - 2013', 'Student Satisfaction Rate - 2013','Graduation Ontrack Rate - 2012',
- 			'Graduation Rate - 2012', 'College Career Rate - 2012', 'Student Satisfaction Rate - 2012']
+			self.performance_params = valid_features
  			
  			try:
- 				self.graph_generator = GraphGenerator(self.schools, defaultPageSize)
+ 				self.graph_generator = GraphGenerator(school_database,self.schools, defaultPageSize)
  			except InvalidComparisonError:
  				pass
 

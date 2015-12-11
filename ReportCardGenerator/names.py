@@ -1,76 +1,85 @@
 from school import *
 import sys
 
-def prompt_for_names():
-	'''Asks for a list of names.'''
+class Names_Toolkit(object):
 
-	return raw_input("\nEnter a list of comma-separated, high school names. If needed, see SchoolDirectory.txt for reference: ")
+	def __init__(self, school_database, school_names):
+		'''create instance of top10 mode, instance variables contain the relevant data'''
 
+		self.school_database = school_database
+		self.school_names = school_names
 
-def validate_names(input):
+	@staticmethod
+	def prompt_for_names():
+		'''Asks for a list of names.'''
 
-	'''Takes a string containing a list of school names and makes sure that these schools are in the directory.'''
-
-	if input.strip().lower() == 'quit':
-		sys.exit()
-
-	else:
-
-		#Split the input string into a list of strings on the comma indices
-		names = [name.strip() for name in input.split(",")]
-
-		passed = []
-		failed = []
-
-		for i in range(len(names)):
-	
-			try:
-				passed.append(School(names[i]))
-	
-			#Cannot construct a school object if the provided name is not in the global list school_names
-			except InvalidSchoolNameError:
-				failed.append(names[i])
-
-		return [passed, failed]
+		return raw_input("\nEnter a list of comma-separated, high school names. If needed, see SchoolDirectory.txt for reference: ")
 
 
-def prompt_to_ignore_invalid_names():
+	def validate_names(self,input):
 
-	return raw_input('''\nWould you like to generate reports for the schools that were in our directory? \nType 'yes' to proceed. Press any other key to enter another list of schools: ''')
+		'''Takes a string containing a list of school names and makes sure that these schools are in the directory.'''
 
-
-def ignore_invalid_names(input):
-
-	if input.strip().lower() == 'quit':
-		sys.exit()
-	elif input.strip().lower() == "yes":
-		return True
-	else:
-		return False
-
-
-def get_schools_by_name():
-	'''Recursively asks the user to provide a list of names. If there are invalid names in the list, 
-	the user has the option to re-enter the list or continue with the valid ones in the provided list.'''
-
-	passed, failed = validate_names(prompt_for_names())
-
-	if len(failed) > 0:
-		
-		if len(passed) == 0:
-			print "\nNone of the schools you have provided are in our directory."
-			return get_schools_by_name()
+		if input.strip().lower() == 'quit':
+			sys.exit()
 
 		else:
 
-			print "\nThe following schools are not available in our directory: ", 
-			for school in range(len(failed)):
-				print failed[school]+",",
+			#Split the input string into a list of strings on the comma indices
+			names = [name.strip() for name in input.split(",")]
 
-			#Give the user the option to continue if there are some valid names in the list. 			
-			return passed if ignore_invalid_names(prompt_to_ignore_invalid_names()) == True else get_schools_by_name()
+			passed = []
+			failed = []
 
-	else:
-		#Even though the user is allowed to enter non-unique schools, we will ignore duplicates. 
-		return list(set(passed))
+			for name in names:
+		
+				try:
+					passed.append(School(self.school_database, self.school_names,name))
+		
+				#Cannot construct a school object if the provided name is not in the global list school_names
+				except InvalidSchoolNameError:
+					failed.append(name)
+
+			return [passed, failed]
+
+	@staticmethod
+	def prompt_to_ignore_invalid_names():
+
+		return raw_input('''\nWould you like to generate reports for the schools that were in our directory? \nType 'yes' to proceed. Press any other key to enter another list of schools: ''')
+
+	@staticmethod
+	def ignore_invalid_names(input):
+
+		if input.strip().lower() == 'quit':
+			sys.exit()
+		elif input.strip().lower() == "yes":
+			return True
+		else:
+			return False
+
+
+	def get_schools_by_name(self):
+		'''Recursively asks the user to provide a list of names. If there are invalid names in the list, 
+		the user has the option to re-enter the list or continue with the valid ones in the provided list.'''
+
+		passed, failed = self.validate_names(self.prompt_for_names())
+
+		if len(failed) > 0:
+			
+			if len(passed) == 0:
+				print "\nNone of the schools you have provided are in our directory."
+				return self.get_schools_by_name()
+
+			else:
+
+				print "\nThe following schools are not available in our directory: ", 
+				for school in failed:
+					print school+",",
+
+				#Give the user the option to continue if there are some valid names in the list. 			
+				return passed if self.ignore_invalid_names(self.prompt_to_ignore_invalid_names()) == True else self.get_schools_by_name()
+
+		else:
+			#Even though the user is allowed to enter non-unique schools, we will ignore duplicates. 
+			return list(set(passed))
 
