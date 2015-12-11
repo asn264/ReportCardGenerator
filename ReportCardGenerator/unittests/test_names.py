@@ -14,11 +14,6 @@ class Validate_Names_Test(TestCase):
 		real_schools = [School(school_database, school_names,name) for name in ['University Neighborhood High School', 'East Side Community School']]
 		self.assertEqual(names_mode.validate_names("University Neighborhood High School, East Side Community School, TEST, nyc"), [real_schools, ['TEST', 'nyc']])
 
-	def test_duplicates(self):
-		#Check the validate_schools ignores duplicates school names
-		no_duplicate_schools = [School(school_database,school_names,name) for name in ['University Neighborhood High School', 'East Side Community School']]
-		self.assertEqual(names_mode.validate_names('University Neighborhood High School, East Side Community School, East Side Community School'), no_duplicate_schools)
-
 	def test_quit(self):
 		self.assertRaises(SystemExit, names_mode.validate_names, 'quit')
 

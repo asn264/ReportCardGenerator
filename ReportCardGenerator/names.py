@@ -58,6 +58,7 @@ class Names_Toolkit(object):
 			return False
 
 
+
 	def get_schools_by_name(self):
 		'''Recursively asks the user to provide a list of names. If there are invalid names in the list, 
 		the user has the option to re-enter the list or continue with the valid ones in the provided list.'''
@@ -77,7 +78,7 @@ class Names_Toolkit(object):
 					print school+",",
 
 				#Give the user the option to continue if there are some valid names in the list. 			
-				return passed if self.ignore_invalid_names(self.prompt_to_ignore_invalid_names()) == True else self.get_schools_by_name()
+				return list(set(passed)) if self.ignore_invalid_names(self.prompt_to_ignore_invalid_names()) == True else self.get_schools_by_name()
 
 		else:
 			#Even though the user is allowed to enter non-unique schools, we will ignore duplicates. 
