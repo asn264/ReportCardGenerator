@@ -94,7 +94,7 @@ class GraphGenerator(object):
 		writing_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Writing Avg'].dropna()
 
 		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+		plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
 
 		#create a bar for each month
 		bar_width = 0.2
@@ -114,11 +114,11 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
-		plt.legend()
+		lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 		#save plot
 		filename = 'sat_barplot' + str(fig_index)
-		plt.savefig('plots/' + filename + '.png', bbox_inches = 'tight')
+		plt.savefig('plots/' + filename + '.png',bbox_extra_artists=(lgd,), bbox_inches = 'tight')
 
 		return 'plots/'+ filename + '.png'
 
@@ -131,7 +131,7 @@ class GraphGenerator(object):
 		data = data.dropna()
 
 		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.6))
 
 		plt.bar(np.arange(len(data)),data,align='center')
 		plt.xlabel('Schools')
@@ -163,7 +163,7 @@ class GraphGenerator(object):
 		august_data = august_data.dropna()
 
 		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+		plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
 
 		#create a bar for each month
 		bar_width = 0.35
@@ -182,11 +182,11 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
-		plt.legend()
+		lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 		#save plot
 		filename = 'regents_barplot' + str(fig_index)
-		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 		return 'plots/'+filename+'.png'
 
@@ -217,18 +217,18 @@ class GraphGenerator(object):
 			plt.clf()
 
 			#set size of figure
-			plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+			plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
 
 			#create a bar for each category
 			bar_width = 0.2
-			rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Graduation Ontrack')
+			rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Ontrack')
 			rects2 = plt.bar(np.arange(len(graduation_data))+bar_width, graduation_data, bar_width,color='r',label='Graduation')
-			rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College Career')
+			rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College')
 
 			#set labels, titles, and ticks with school names
 			plt.xlabel('Schools')
 			plt.ylabel('Rate (%)')
-			plt.title('Graduation and College Career Rates by School in '+year)
+			plt.title('Graduation and College Rates by School in '+year)
 			plt.xticks(np.arange(len(graduation_data)) + 1.5*bar_width, self.names,fontsize=8)
 			plt.xticks(rotation=90)
 
@@ -237,11 +237,11 @@ class GraphGenerator(object):
 				warnings.simplefilter("ignore", UserWarning)
 				plt.tight_layout()
 
-			plt.legend()
+			lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 			#save plot
 			filename = 'graduation_and_college_barplots' + str(fig_index)
-			plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
+			plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 			return 'plots/'+filename+'.png'
 
@@ -263,7 +263,7 @@ class GraphGenerator(object):
 		data_2013 = data_2013.drop(rows_to_drop)
 
 		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+		plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
 
 		#create a bar for each month
 		bar_width = 0.35
@@ -282,11 +282,11 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
-		plt.legend()
+		lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 		#save plot
 		filename = 'student_satisfaction_barplots' + str(fig_index)
-		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 		return 'plots/'+filename+'.png'
 
