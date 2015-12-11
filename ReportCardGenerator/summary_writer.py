@@ -52,7 +52,7 @@ class SummaryWriter(object):
  				self.add_visualization_warning = True
 
  			#if there are less than 5 schools in the database, then distribution plots aren't displayed as there isn't enough data
- 			if len(schools)<5:
+ 			if len(schools) < 5:
  				self.add_distribution_warning = True
 
 			#Only name mode requires no user parameters. Raise an exception in other cases.
@@ -94,8 +94,7 @@ class SummaryWriter(object):
 			raise InvalidSummaryWriterError
 
 
-
-	def get_title(self):
+	def get_title():
 
 		'''Returns a new paragraph object containing the report titles'''
 
@@ -133,12 +132,12 @@ class SummaryWriter(object):
 	def get_visualization_warning(self):
 		'''creates a warning object if only one school is used to generate the report'''
 
-		return Paragraph("No visualizations were generated because only one school was used to generate the report.",self.styles['Normal'])
+		return Paragraph("Note: No visualizations were generated because only one school was used to create the report.",self.styles['Normal'])
 
 	def get_distribution_warning(self):
 		'''creates a warning object if less than 5 schools are used to generate the report'''
 
-		return Paragraph("No boxplots/histograms were generated because only " + str(len(self.schools)) + " schools were used to generate the report.\nAt least 5 schools are needed to generate visualizations showing the distribution of the data.",self.styles['Normal'])
+		return Paragraph("Note: No boxplots/histograms were generated because only " + str(len(self.schools)) + " schools were used to create the report.\nAt least 5 schools are needed to generate valuable visualizations showing the distribution of the data.",self.styles['Normal'])
 
 	def get_title_page(self):
 
@@ -149,12 +148,12 @@ class SummaryWriter(object):
 		if self.mode == 'location':
 			title_page.append(self.describe_location_query())
 		
-		title_page.append(self.get_schools())
+		title_page.extend([self.get_schools(), self.medium_spacer])
 		
 		if self.add_visualization_warning:
-			title_page.extend([self.medium_spacer,self.get_visualization_warning()])
+			title_page.append(self.get_visualization_warning())
 		elif self.add_distribution_warning:
-			title_page.extend([self.medium_spacer,self.get_distribution_warning()])
+			title_page.append(self.get_distribution_warning())
 
 		title_page.append(PageBreak())
 		
@@ -330,6 +329,7 @@ class SummaryWriter(object):
 				summaries.extend(self.get_school_summary(school,index+1))
 			else:
 				summaries.extend(self.get_school_summary(school))
+		summaries.append(PageBreak())
 		return summaries 
 
 
