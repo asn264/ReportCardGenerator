@@ -130,7 +130,7 @@ class SummaryWriter(object):
 
 		return Paragraph("The schools evaluated in this report are: " + ", ".join([str(school) for school in self.schools]) + ".", self.styles['Normal'])
 
-	def get_visualiation_warning(self):
+	def get_visualization_warning(self):
 		'''creates a warning object if only one school is used to generate the report'''
 
 		return Paragraph("No visualizations were generated because only one school was used to generate the report.",self.styles['Normal'])

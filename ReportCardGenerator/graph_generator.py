@@ -41,7 +41,7 @@ class GraphGenerator(object):
 
 		'''Creates all of the boxplots and returns a list of all their filenames/address.'''
 		#return [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
-		self.create_sat_test_takers_histogram()
+		return [self.create_sat_test_takers_histogram()]
 
 	def get_bar_plots(self):
 
@@ -331,7 +331,7 @@ class GraphGenerator(object):
 		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
 		print data.dropna()
-		'''
+		
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
 
@@ -349,7 +349,7 @@ class GraphGenerator(object):
 		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
 
 		return 'Plots/'+filename+'.png'
-		'''
+	
 
 
 
