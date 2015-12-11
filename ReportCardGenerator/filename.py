@@ -23,23 +23,27 @@ def check_legal_filename(user_input):
 
 	'''Ensures that filenames are safe. Conservatively, we will force the user to only use filenames that have alphanumeric characters and underscores.'''
 	
-	#If the string is fully alphanumeric, return True - it *is* legal.
-	if user_input.isalnum():
-		return True
-
-	#If there are characters besides alphanumeric characters, we will only allow underscores.
+	if len(user_input)==0:
+		return False
 	else:
 
-		#Check if the first element is an underscore. If so ignore it below.
-		if user_input[0] == "_":
-			user_input = user_input[1:]
+		#If the string is fully alphanumeric, return True - it *is* legal.
+		if user_input.isalnum():
+			return True
 
-		#Check if the last element is an underscore. If so ignore it below.
-		if user_input[-1] == "_":
-			user_input = user_input[0:-1]
+		#If there are characters besides alphanumeric characters, we will only allow underscores.
+		else:
 
-		#Try splitting by "_" and seeing if the substrings are alphanumeric. Return True if all of the substrings are alphanumeric.
-		return all([substring.isalnum() for substring in user_input.split("_")])
+			#Check if the first element is an underscore. If so ignore it below.
+			if user_input[0] == "_":
+				user_input = user_input[1:]
+
+			#Check if the last element is an underscore. If so ignore it below.
+			if user_input[-1] == "_":
+				user_input = user_input[0:-1]
+
+			#Try splitting by "_" and seeing if the substrings are alphanumeric. Return True if all of the substrings are alphanumeric.
+			return all([substring.isalnum() for substring in user_input.split("_")])
 
 
 def get_filename():
