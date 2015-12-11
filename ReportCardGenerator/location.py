@@ -1,5 +1,4 @@
 #import modules/classes
-from utilities import *
 from school import *
 
 #import necessary libraries

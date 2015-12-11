@@ -1,6 +1,5 @@
 #import modules/classes
 from school import *
-from utilities import *
 
 #import libraries used
 import sys
