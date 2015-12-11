@@ -138,27 +138,27 @@ class SummaryWriter(object):
 	def get_distribution_warning(self):
 		'''creates a warning object if less than 5 schools are used to generate the report'''
 
-		return Paragraph("No boxplots/histograms were generated because only " + len(self.schools) + " schools were used to generate the report.\nAt least 5 schools are needed to generate visualizations showing the distribution of the data.",self.styles['Normal'])
+		return Paragraph("No boxplots/histograms were generated because only " + str(len(self.schools)) + " schools were used to generate the report.\nAt least 5 schools are needed to generate visualizations showing the distribution of the data.",self.styles['Normal'])
 
 	def get_title_page(self):
 
 		'''Creates a template for the first page using the flowable objects: Spacer, Paragraph, PageBreak. Includes location query information in location mode.'''
 		
-		base_page = [self.big_spacer, self.get_title(), self.get_authors(), self.medium_spacer, self.get_mode()]
+		title_page = [self.big_spacer, self.get_title(), self.get_authors(), self.medium_spacer, self.get_mode()]
 
 		if self.mode == 'location':
-			base_page.append(self.describe_location_query())
+			title_page.append(self.describe_location_query())
 		
-		base_page.append(self.get_schools())
+		title_page.append(self.get_schools())
 		
 		if self.add_visualization_warning:
-			base_page.append(self.medium_spacer,self.get_visualization_warning())
-		elif self.add_boxplot_warning:
-			base_page.append(self.medium_spacer,self.get_distribution_warning())
+			title_page.extend([self.medium_spacer,self.get_visualization_warning()])
+		elif self.add_distribution_warning:
+			title_page.extend([self.medium_spacer,self.get_distribution_warning()])
 
-		base_page.append(PageBreak())
+		title_page.append(PageBreak())
 		
-		return base_page
+		return title_page
 
 	def get_top10_schools_by_rank(self):
 
@@ -333,36 +333,6 @@ class SummaryWriter(object):
 		return summaries 
 
 
-	def get_graphs(self):
-
-		graphs = []
-
-		#Don't do bar plots (comparisons) if there are more than 20
-		if len(self.schools) <= 20:
-
-			graphs.append([Image(png_file) for png_file in create_sat_score_boxplots()])
-
-			graphs.append(Image(self.graph_generator.create_sat_score_bar_plot()))
-			graphs.append(Image(self.graph_generator.create_sat_test_takers_bar_plot()))
-			graphs.append(Image(self.graph_generator.create_regents_bar_plot()))
-			graphs.append(Image(self.graph_generator.create_graduation_and_college_bar_plots()))
-			graphs.append(Image(self.graph_generator.create_student_satisfaction_bar_plots()))
-
-		#Don't do distributions if there are less than 5
-		if len(self.schools) >= 5:
-
-			#The graph generator create_ functions return a local filepath to the png files containing the plots
-			graphs.append(Image(self.graph_generator.create_sat_score_boxplots()))
-			graphs.append(Image(self.graph_generator.create_sat_test_takers_histogram()))
-			graphs.append(Image(self.graph_generator.create_regents_box_plots()))
-			graphs.append(Image(self.graph_generator.create_graduation_and_college_box_plots()))
-			graphs.append(Image(self.graph_generator.create_student_satisfaction_box_plots()))
-
-
-		#Probably want to add spacers and headings3
-			
-		return graphs
-
 	def write_report(self):
 
 		'''Writes the report by appending Paragraph, Spacer, and PageBreak objects as necessary.'''
@@ -377,8 +347,14 @@ class SummaryWriter(object):
 		#Add the individual summaries from each school.
 		elements.extend(self.get_summaries())
 
-		#Generate and add graphs as necessary
-		elements.extend(self.get_graphs())
+		#If there is more than one school in self.schools, add bar plots using graph generator object
+		#if not self.add_visualization_warning:
+		#	elements.extend([Image(png_file) for png_file in self.graph_generator.get_bar_plots()])
+
+		#If there are at least five schools in self.schools, add distribution plots using the graph generator object
+		if not self.add_distribution_warning:
+			#elements.extend([Image(png_file) for png_file in self.graph_generator.get_distribution_plots()])
+			self.graph_generator.get_distribution_plots()
 
 		#Create and save the file.
 		doc = SimpleDocTemplate(self.filename)
