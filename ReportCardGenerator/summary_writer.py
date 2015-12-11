@@ -353,8 +353,8 @@ class SummaryWriter(object):
 
 		#If there are at least five schools in self.schools, add distribution plots using the graph generator object
 		if not self.add_distribution_warning:
-			#elements.extend([Image(png_file) for png_file in self.graph_generator.get_distribution_plots()])
-			self.graph_generator.get_distribution_plots()
+			elements.extend([Image(png_file) for png_file in self.graph_generator.get_distribution_plots()])
+			#self.graph_generator.get_distribution_plots()
 
 		#Create and save the file.
 		doc = SimpleDocTemplate(self.filename)

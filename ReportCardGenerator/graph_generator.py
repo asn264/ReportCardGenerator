@@ -40,8 +40,7 @@ class GraphGenerator(object):
 	def get_distribution_plots(self):
 
 		'''Creates all of the boxplots and returns a list of all their filenames/address.'''
-		#return [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
-		return [self.create_sat_test_takers_histogram()]
+		return [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
 
 	def get_bar_plots(self):
 
@@ -330,14 +329,13 @@ class GraphGenerator(object):
 		#get data for the number of test takers
 		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
-		print data.dropna()
 		
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
 
 		#dynamically set number of bins based on number of school
 		#plt.hist(data.dropna(),bins=max(10,int(len(self.names)/10)))
-		plt.hist(data.dropna(), bins=10)
+		plt.hist(list(data.dropna()), bins=10)
 
 		#set axis labels and title
 		plt.xlabel('Number of SAT Test Takers',fontsize=16)
