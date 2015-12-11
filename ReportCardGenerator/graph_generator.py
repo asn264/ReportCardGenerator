@@ -36,6 +36,262 @@ class GraphGenerator(object):
 		else:
 			raise InvalidComparisonError
 
+
+	def get_distribution_plots(self):
+
+		'''Creates all of the boxplots and returns a list of all their filenames/address.'''
+		return [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
+
+
+	def get_bar_plots(self):
+
+		'''For clarity and neatness, we only want barplots to show at most 15 schools and at least 5 schools, so we split the plotting data
+		and create multiple plots as necessary.'''
+
+		#Add constraints on how many schools are in a plot and keep track of png files that are generated
+		schools_to_plot = self.names
+		min_schools_in_plot = 5
+		max_schools_in_plot = 15
+		#Add an index to each png so they are not overwritten
+		fig_index = 1
+		figures = []
+
+
+		#If the list of schools is larger than 15, generate many plots per plot type where each plot contains at most 15 and at least 5 schools
+		if len(schools_to_plot) > max_schools_in_plot:
+
+			while len(schools_to_plot) >= max_schools_in_plot + min_schools_in_plot:
+
+				#Generate all the bar plots for the current subset of the list
+				figures.append(self.create_sat_score_bar_plot(schools_to_plot[0:15],fig_index))
+				figures.append(self.create_sat_test_takers_bar_plot(schools_to_plot[0:15], fig_index))
+				figures.append(self.create_regents_bar_plot(schools_to_plot[0:15], fig_index))
+				figures.append(self.create_graduation_and_college_bar_plots(schools_to_plot[0:15], fig_index))
+				figures.append(self.create_student_satisfaction_bar_plots(schools_to_plot[0:15], fig_index))
+
+				#Delete already-plotted schools from the list and change the index
+				schools_to_plot = schools_to_plot[15:]
+				fig_index += 1
+
+
+		#If the list of schools is small enough, generate only one plot per plot type
+		figures.append(self.create_sat_score_bar_plot(schools_to_plot, fig_index))
+		figures.append(self.create_sat_test_takers_bar_plot(schools_to_plot, fig_index))
+		figures.append(self.create_regents_bar_plot(schools_to_plot, fig_index))
+		figures.append(self.create_graduation_and_college_bar_plots(schools_to_plot, fig_index))
+		figures.append(self.create_student_satisfaction_bar_plots(schools_to_plot, fig_index))
+
+		#Returns a list of filenames indicating the address of the bar plots
+		return figures
+
+
+	def create_sat_score_bar_plot(self, schools_to_plot, fig_index):
+
+		'''Saves a bar plot of the SAT scores by section for each school.'''
+
+		#Get SAT score data for each section, dropping NaN values. Avoid searching the dataframe multiple times.
+		math_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Math Avg'].dropna()
+		reading_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Critical Reading Avg'].dropna()
+		writing_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Writing Avg'].dropna()
+
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
+		#create a bar for each month
+		bar_width = 0.2
+		rects1 = plt.bar(np.arange(len(math_data)), math_data, bar_width, color='b', label='Math')
+		rects2 = plt.bar(np.arange(len(reading_data)) + bar_width, reading_data, bar_width, color='r', label='Reading')
+		rects3 = plt.bar(np.arange(len(writing_data)) + 2 * bar_width, writing_data, bar_width, color='g', label='Writing')
+
+		#set labels, titles, and ticks with school names
+		plt.xlabel('Schools')
+		plt.ylabel('SAT Score')
+		plt.title('SAT Scores by School')
+		plt.xticks(np.arange(len(math_data)) + 1.5*bar_width, self.names, fontsize=8)
+		plt.xticks(rotation=90)
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		plt.legend()
+
+		#save plot
+		filename = 'sat_barplot' + str(fig_index)
+		plt.savefig('Plots/' + filename + '.png', bbox_inches = 'tight')
+
+		return 'Plots/'+ filename + '.png'
+
+
+	def create_sat_test_takers_bar_plot(self, schools_to_plot, fig_index):
+		'''saves a bar plot of the number of students who took the SAT by school'''
+
+		#get data for the number of test takers
+		data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Number of SAT Test Takers']
+		data = data.dropna()
+
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
+		plt.bar(np.arange(len(data)),data,align='center')
+		plt.xlabel('Schools')
+		plt.ylabel('Number of Students')
+		plt.xticks(np.arange(len(data)), self.names,fontsize=8)
+		plt.xticks(rotation=90)
+		plt.title('Number of SAT Test Takers by School')
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		#save plot
+		filename = 'sat_test_takers_barplot' + str(fig_index)
+		plt.savefig('Plots/' + filename +'.png', bbox_inches='tight')
+
+		return 'Plots/'+filename+'.png'
+
+
+
+	def create_regents_bar_plot(self, schools_to_plot, fig_index):
+		'''Saves a bar plot of the percent of students that passed the Regents exam in June and August'''
+
+		#get Regents data for each month
+		june_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - June']
+		august_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - August']
+		june_data = june_data.dropna()
+		august_data = august_data.dropna()
+
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
+		#create a bar for each month
+		bar_width = 0.35
+		rects1 = plt.bar(np.arange(len(june_data)), june_data, bar_width,color='b',label='June')
+		rects2 = plt.bar(np.arange(len(august_data))+bar_width, august_data, bar_width,color='r',label='August')
+
+		#set labels, titles, and ticks with school names
+		plt.xlabel('Schools')
+		plt.ylabel('Regents Pass Rate (%)')
+		plt.title('Regents Pass Rate by School')
+		plt.xticks(np.arange(len(june_data)) + bar_width, self.names,fontsize=8)
+		plt.xticks(rotation=90)
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		plt.legend()
+
+		#save plot
+		filename = 'regents_barplot' + str(fig_index)
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+
+		return 'Plots/'+filename+'.png'
+
+
+	def create_graduation_and_college_bar_plots(self, schools_to_plot, fig_index):
+		'''saves bar plots of ontrack graduation, graduation, and college career rates for each school'''
+
+		years = ['2012','2013']
+
+		#make bar plot for each year
+		for year in years:
+			#get the student rates for each category
+			ontrack_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Graduation Ontrack Rate - '+year]
+			graduation_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Graduation Rate - '+year]
+			college_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['College Career Rate - '+year]
+
+			#drop schools that have any of the the three rates missing
+			rows_to_drop=[]
+			for i in range (0,len(self.names)):
+				if np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]):
+					row_index = ontrack_data.index.values[i]
+					rows_to_drop.append(row_index)
+			ontrack_data = ontrack_data.drop(rows_to_drop)
+			graduation_data = graduation_data.drop(rows_to_drop)
+			college_data = college_data.drop(rows_to_drop)
+
+			#clear plot
+			plt.clf()
+
+			#set size of figure
+			plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
+			#create a bar for each category
+			bar_width = 0.2
+			rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Graduation Ontrack')
+			rects2 = plt.bar(np.arange(len(graduation_data))+bar_width, graduation_data, bar_width,color='r',label='Graduation')
+			rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College Career')
+
+			#set labels, titles, and ticks with school names
+			plt.xlabel('Schools')
+			plt.ylabel('Rate (%)')
+			plt.title('Graduation and College Career Rates by School in '+year)
+			plt.xticks(np.arange(len(graduation_data)) + 1.5*bar_width, self.names,fontsize=8)
+			plt.xticks(rotation=90)
+
+			#catches user warning rather than printing it
+			with warnings.catch_warnings():
+				warnings.simplefilter("ignore", UserWarning)
+				plt.tight_layout()
+
+			plt.legend()
+
+			#save plot
+			filename = 'graduation_and_college_barplots' + str(fig_index)
+			plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+
+			return 'Plots/'+filename+'.png'
+
+
+	def create_student_satisfaction_bar_plots(self, schools_to_plot, fig_index):
+		'''saves a bar plot of the student satisfaction scores by school'''
+
+		#get Regents data for each month
+		data_2012 = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Student Satisfaction Rate - 2012']
+		data_2013 = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Student Satisfaction Rate - 2013']
+
+		#drop schools that have any of the the two years missing
+		rows_to_drop=[]
+		for i in range (0,len(self.names)):
+			if np.isnan(data_2012.iloc[i]) or np.isnan(data_2013.iloc[i]):
+				row_index = data_2012.index.values[i]
+				rows_to_drop.append(row_index)
+		data_2012 = data_2012.drop(rows_to_drop)
+		data_2013 = data_2013.drop(rows_to_drop)
+
+		#set size of figure
+		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
+
+		#create a bar for each month
+		bar_width = 0.35
+		rects1 = plt.bar(np.arange(len(data_2012)), data_2012, bar_width,color='b',label='2012')
+		rects2 = plt.bar(np.arange(len(data_2013))+bar_width, data_2013, bar_width,color='r',label='2013')
+
+		#set labels, titles, and ticks with school names
+		plt.xlabel('Schools')
+		plt.ylabel('Satisfaction (out of 10)')
+		plt.title('Student Satisfaction by School')
+		plt.xticks(np.arange(len(data_2012)) + bar_width, self.names,fontsize=8)
+		plt.xticks(rotation=90)
+
+		#catches user warning rather than printing it
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", UserWarning)
+			plt.tight_layout()
+
+		plt.legend()
+
+		#save plot
+		filename = 'student_satisfaction_barplots' + str(fig_index)
+		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+
+		return 'Plots/'+filename+'.png'
+
+
 	def create_sat_score_boxplots(self):
 		'''saves boxplots showing the distribution of SAT scores for each of the 3 sections'''
 		
@@ -67,67 +323,6 @@ class GraphGenerator(object):
 		return 'Plots/'+filename+'.png'
 
 
-	def get_bar_plots(self):
-
-		'''For neatness, we only want barplots to show at most 15 schools so we split the plotting data as necessary.'''
-		min_schools_in_plot = 5
-		max_schools_in_plot = 15
-
-		if len(self.schools) <= max_schools_in_plot:
-			#plot everything
-
-		#Returns an integer indicating how many things are in each bar plot (except possibly the last one)
-		else:
-			schools_to_plot = self.schools
-			#Take out 15 at a time as long as there is at least 5 other elements in the list
-			while len(schools_to_plot) >= max_schools_in_plot+min_schools_in_plot:
-				self.create_sat_score_bar_plot([0,15])
-				schools_to_plot = schools_to_plot[15:]
-
-			#plot the remainder (5 or more)
-
-
-
-	def create_sat_score_bar_plot(self):
-		'''saves a bar plot of the SAT scores by section for each school'''
-
-		#get SAT score data for each section
-		math_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT Math Avg']
-		reading_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT Critical Reading Avg']
-		writing_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT Writing Avg']
-		math_data = math_data.dropna()
-		reading_data = reading_data.dropna()
-		writing_data = writing_data.dropna()
-
-		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
-
-		#create a bar for each month
-		bar_width = 0.2
-		rects1 = plt.bar(np.arange(len(math_data)), math_data, bar_width,color='b',label='Math')
-		rects2 = plt.bar(np.arange(len(reading_data))+bar_width, reading_data, bar_width,color='r',label='Reading')
-		rects3 = plt.bar(np.arange(len(writing_data))+2*bar_width, writing_data, bar_width,color='g',label='Writing')
-
-		#set labels, titles, and ticks with school names
-		plt.xlabel('Schools')
-		plt.ylabel('SAT Score')
-		plt.title('SAT Scores by School')
-		plt.xticks(np.arange(len(math_data)) + 1.5*bar_width, self.names,fontsize=8)
-		plt.xticks(rotation=90)
-
-		#catches user warning rather than printing it
-		with warnings.catch_warnings():
-			warnings.simplefilter("ignore", UserWarning)
-			plt.tight_layout()
-
-		plt.legend()
-
-		#save plot
-		filename = 'sat_barplot'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
-
-		return 'Plots/'+filename+'.png'
-
 	def create_sat_test_takers_histogram(self):
 		'''saves a histogram showing the distribution of the number of SAT test takers'''
 		
@@ -152,33 +347,6 @@ class GraphGenerator(object):
 
 		return 'Plots/'+filename+'.png'
 
-	def create_sat_test_takers_bar_plot(self):
-		'''saves a bar plot of the number of students who took the SAT by school'''
-
-		#get data for the number of test takers
-		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
-		data = data.dropna()
-
-		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
-
-		plt.bar(np.arange(len(data)),data,align='center')
-		plt.xlabel('Schools')
-		plt.ylabel('Number of Students')
-		plt.xticks(np.arange(len(data)), self.names,fontsize=8)
-		plt.xticks(rotation=90)
-		plt.title('Number of SAT Test Takers by School')
-
-		#catches user warning rather than printing it
-		with warnings.catch_warnings():
-			warnings.simplefilter("ignore", UserWarning)
-			plt.tight_layout()
-
-		#save plot
-		filename = 'sat_test_takers_barplot'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
-
-		return 'Plots/'+filename+'.png'
 
 
 	def create_regents_box_plots(self):
@@ -211,42 +379,7 @@ class GraphGenerator(object):
 
 		return 'Plots/'+filename+'.png'
 
-	def create_regents_bar_plot(self):
-		'''saves a bar plot of the % of students that passed the Regents exam in June and August'''
 
-		#get Regents data for each month
-		june_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Regents Pass Rate - June']
-		august_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Regents Pass Rate - August']
-		june_data = june_data.dropna()
-		august_data = august_data.dropna()
-
-		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
-
-		#create a bar for each month
-		bar_width = 0.35
-		rects1 = plt.bar(np.arange(len(june_data)), june_data, bar_width,color='b',label='June')
-		rects2 = plt.bar(np.arange(len(august_data))+bar_width, august_data, bar_width,color='r',label='August')
-
-		#set labels, titles, and ticks with school names
-		plt.xlabel('Schools')
-		plt.ylabel('Regents Pass Rate (%)')
-		plt.title('Regents Pass Rate by School')
-		plt.xticks(np.arange(len(june_data)) + bar_width, self.names,fontsize=8)
-		plt.xticks(rotation=90)
-
-		#catches user warning rather than printing it
-		with warnings.catch_warnings():
-			warnings.simplefilter("ignore", UserWarning)
-			plt.tight_layout()
-
-		plt.legend()
-
-		#save plot
-		filename = 'regents_barplot'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
-
-		return 'Plots/'+filename+'.png'
 
 	def create_graduation_and_college_box_plots(self):
 		'''saves boxplots showing the distribution of ontrack graduation, graduation, and college career rates'''
@@ -288,59 +421,6 @@ class GraphGenerator(object):
 
 		return 'Plots/'+filename+'.png'
 
-	def create_graduation_and_college_bar_plots(self):
-		'''saves bar plots of ontrack graduation, graduation, and college career rates for each school'''
-
-		years = ['2012','2013']
-
-		#make bar plot for each year
-		for year in years:
-			#get the student rates for each category
-			ontrack_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Graduation Ontrack Rate - '+year]
-			graduation_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Graduation Rate - '+year]
-			college_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['College Career Rate - '+year]
-
-			#drop schools that have any of the the three rates missing
-			rows_to_drop=[]
-			for i in range (0,len(self.names)):
-				if np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]):
-					row_index = ontrack_data.index.values[i]
-					rows_to_drop.append(row_index)
-			ontrack_data = ontrack_data.drop(rows_to_drop)
-			graduation_data = graduation_data.drop(rows_to_drop)
-			college_data = college_data.drop(rows_to_drop)
-
-			#clear plot
-			plt.clf()
-
-			#set size of figure
-			plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
-
-			#create a bar for each category
-			bar_width = 0.2
-			rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Graduation Ontrack')
-			rects2 = plt.bar(np.arange(len(graduation_data))+bar_width, graduation_data, bar_width,color='r',label='Graduation')
-			rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College Career')
-
-			#set labels, titles, and ticks with school names
-			plt.xlabel('Schools')
-			plt.ylabel('Rate (%)')
-			plt.title('Graduation and College Career Rates by School in '+year)
-			plt.xticks(np.arange(len(graduation_data)) + 1.5*bar_width, self.names,fontsize=8)
-			plt.xticks(rotation=90)
-
-			#catches user warning rather than printing it
-			with warnings.catch_warnings():
-				warnings.simplefilter("ignore", UserWarning)
-				plt.tight_layout()
-
-			plt.legend()
-
-			#save plot
-			filename = 'graduation_and_college_barplots'
-			plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
-
-			return 'Plots/'+filename+'.png'
 
 	def create_student_satisfaction_box_plots(self):
 		'''saves boxplots showing the distribution of student satisfaction scores'''
@@ -372,47 +452,5 @@ class GraphGenerator(object):
 
 		return 'Plots/'+filename+'.png'
 
-	def create_student_satisfaction_bar_plots(self):
-		'''saves a bar plot of the student satisfaction scores by school'''
 
-		#get Regents data for each month
-		data_2012 = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2012']
-		data_2013 = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - 2013']
-
-		#drop schools that have any of the the two years missing
-		rows_to_drop=[]
-		for i in range (0,len(self.names)):
-			if np.isnan(data_2012.iloc[i]) or np.isnan(data_2013.iloc[i]):
-				row_index = data_2012.index.values[i]
-				rows_to_drop.append(row_index)
-		data_2012 = data_2012.drop(rows_to_drop)
-		data_2013 = data_2013.drop(rows_to_drop)
-
-		#set size of figure
-		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
-
-		#create a bar for each month
-		bar_width = 0.35
-		rects1 = plt.bar(np.arange(len(data_2012)), data_2012, bar_width,color='b',label='2012')
-		rects2 = plt.bar(np.arange(len(data_2013))+bar_width, data_2013, bar_width,color='r',label='2013')
-
-		#set labels, titles, and ticks with school names
-		plt.xlabel('Schools')
-		plt.ylabel('Satisfaction (out of 10)')
-		plt.title('Student Satisfaction by School')
-		plt.xticks(np.arange(len(data_2012)) + bar_width, self.names,fontsize=8)
-		plt.xticks(rotation=90)
-
-		#catches user warning rather than printing it
-		with warnings.catch_warnings():
-			warnings.simplefilter("ignore", UserWarning)
-			plt.tight_layout()
-
-		plt.legend()
-
-		#save plot
-		filename = 'student_satisfaction_barplots'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
-
-		return 'Plots/'+filename+'.png'
 
