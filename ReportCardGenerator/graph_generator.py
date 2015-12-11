@@ -30,7 +30,7 @@ class GraphGenerator(object):
 			script_dir = os.path.dirname(__file__)
 			plots_dir = os.path.join(script_dir, 'plots/')
 
-			if not os.path.isdir(plots_dir):
+			if not os.path.isdir(plots_dir): #if the directory doesn't already exist, make it
 				os.makedirs(plots_dir)
 
 		else:
@@ -39,7 +39,7 @@ class GraphGenerator(object):
 
 	def get_distribution_plots(self):
 
-		'''Creates all of the boxplots and returns a list of all their filenames/address.'''
+		'''Creates all of the boxplots/histograms and returns a list of all their filenames/address.'''
 		return [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
 
 	def get_bar_plots(self):
@@ -114,6 +114,7 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
+		#put legend outside of plot
 		lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 		#save plot
@@ -152,7 +153,6 @@ class GraphGenerator(object):
 		return 'plots/'+filename+'.png'
 
 
-
 	def create_regents_bar_plot(self, schools_to_plot, fig_index):
 		'''Saves a bar plot of the percent of students that passed the Regents exam in June and August'''
 
@@ -182,6 +182,7 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
+		#put legend outside of plot
 		lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 		#save plot
@@ -237,6 +238,7 @@ class GraphGenerator(object):
 				warnings.simplefilter("ignore", UserWarning)
 				plt.tight_layout()
 
+			#put legend outside of plot
 			lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 			#save plot
@@ -282,6 +284,7 @@ class GraphGenerator(object):
 			warnings.simplefilter("ignore", UserWarning)
 			plt.tight_layout()
 
+		#put legend outside of plot
 		lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 		#save plot
@@ -325,7 +328,6 @@ class GraphGenerator(object):
 	def create_sat_test_takers_histogram(self):
 		'''saves a histogram showing the distribution of the number of SAT test takers'''
 		
-		
 		#get data for the number of test takers
 		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
@@ -335,7 +337,6 @@ class GraphGenerator(object):
 
 		#dynamically set number of bins based on number of school
 		plt.hist(data.dropna().values,bins=max(10,int(len(self.names)/10)))
-		#plt.hist(list(data.dropna()), bins=10)
 
 		#set axis labels and title
 		plt.xlabel('Number of SAT Test Takers',fontsize=16)
@@ -348,8 +349,6 @@ class GraphGenerator(object):
 
 		return 'plots/'+filename+'.png'
 	
-
-
 
 	def create_regents_box_plots(self):
 		'''saves boxplots showing the distribution of Regents pass rates for each of the 2 months'''
@@ -380,7 +379,6 @@ class GraphGenerator(object):
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
 		return 'plots/'+filename+'.png'
-
 
 
 	def create_graduation_and_college_box_plots(self):
@@ -453,15 +451,3 @@ class GraphGenerator(object):
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
 		return 'plots/'+filename+'.png'
-
-'''
-from utilities import *
-from reportlab.rl_config import defaultPageSize
-school_database,school_names,valid_features = load_session()
-schools = [School(school_database, school_names, 'Henry Street School for International Studies'), School(school_database, school_names, 'University Neighborhood High School'), School(school_database, school_names, 'East Side Community School')]
-graph_generator = GraphGenerator(school_database,schools, defaultPageSize)
-x = graph_generator.get_distribution_plots()
-print x 
-'''
-
-

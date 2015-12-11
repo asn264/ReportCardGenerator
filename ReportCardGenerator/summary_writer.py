@@ -94,7 +94,7 @@ class SummaryWriter(object):
 			raise InvalidSummaryWriterError
 
 
-	def get_title():
+	def get_title(self):
 
 		'''Returns a new paragraph object containing the report titles'''
 
