@@ -28,7 +28,7 @@ class GraphGenerator(object):
 
 			#create directory to save plots
 			script_dir = os.path.dirname(__file__)
-			plots_dir = os.path.join(script_dir, 'Plots/')
+			plots_dir = os.path.join(script_dir, 'plots/')
 
 			if not os.path.isdir(plots_dir):
 				os.makedirs(plots_dir)
@@ -118,9 +118,9 @@ class GraphGenerator(object):
 
 		#save plot
 		filename = 'sat_barplot' + str(fig_index)
-		plt.savefig('Plots/' + filename + '.png', bbox_inches = 'tight')
+		plt.savefig('plots/' + filename + '.png', bbox_inches = 'tight')
 
-		return 'Plots/'+ filename + '.png'
+		return 'plots/'+ filename + '.png'
 
 
 	def create_sat_test_takers_bar_plot(self, schools_to_plot, fig_index):
@@ -149,7 +149,7 @@ class GraphGenerator(object):
 		filename = 'sat_test_takers_barplot' + str(fig_index)
 		plt.savefig('Plots/' + filename +'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 
 
 
@@ -186,9 +186,9 @@ class GraphGenerator(object):
 
 		#save plot
 		filename = 'regents_barplot' + str(fig_index)
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 
 
 	def create_graduation_and_college_bar_plots(self, schools_to_plot, fig_index):
@@ -241,9 +241,9 @@ class GraphGenerator(object):
 
 			#save plot
 			filename = 'graduation_and_college_barplots' + str(fig_index)
-			plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+			plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-			return 'Plots/'+filename+'.png'
+			return 'plots/'+filename+'.png'
 
 
 	def create_student_satisfaction_bar_plots(self, schools_to_plot, fig_index):
@@ -286,9 +286,9 @@ class GraphGenerator(object):
 
 		#save plot
 		filename = 'student_satisfaction_barplots' + str(fig_index)
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 
 
 	def create_sat_score_boxplots(self):
@@ -317,9 +317,9 @@ class GraphGenerator(object):
 
 		#save plot
 		filename = 'sat_boxplots'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 
 
 	def create_sat_test_takers_histogram(self):
@@ -334,8 +334,8 @@ class GraphGenerator(object):
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
 
 		#dynamically set number of bins based on number of school
-		#plt.hist(data.dropna(),bins=max(10,int(len(self.names)/10)))
-		plt.hist(list(data.dropna()), bins=10)
+		plt.hist(data.dropna().values,bins=max(10,int(len(self.names)/10)))
+		#plt.hist(list(data.dropna()), bins=10)
 
 		#set axis labels and title
 		plt.xlabel('Number of SAT Test Takers',fontsize=16)
@@ -344,9 +344,9 @@ class GraphGenerator(object):
 
 		#save plot
 		filename = 'sat_test_takers_histogram'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 	
 
 
@@ -377,9 +377,9 @@ class GraphGenerator(object):
 		
 		#save plot
 		filename = 'regents_boxplots'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 
 
 
@@ -419,9 +419,9 @@ class GraphGenerator(object):
 
 		#save plot
 		filename = 'graduation_and_college_boxplots'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 
 
 	def create_student_satisfaction_box_plots(self):
@@ -450,9 +450,9 @@ class GraphGenerator(object):
 		
 		#save plot
 		filename = 'student_satisfaction_boxplots'
-		plt.savefig('Plots/'+filename+'.png', bbox_inches='tight')
+		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
-		return 'Plots/'+filename+'.png'
+		return 'plots/'+filename+'.png'
 
 '''
 from utilities import *

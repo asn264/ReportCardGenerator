@@ -348,13 +348,12 @@ class SummaryWriter(object):
 		elements.extend(self.get_summaries())
 
 		#If there is more than one school in self.schools, add bar plots using graph generator object
-		#if not self.add_visualization_warning:
-		#	elements.extend([Image(png_file) for png_file in self.graph_generator.get_bar_plots()])
+		if not self.add_visualization_warning:
+			elements.extend([Image(png_file) for png_file in self.graph_generator.get_bar_plots()])
 
 		#If there are at least five schools in self.schools, add distribution plots using the graph generator object
 		if not self.add_distribution_warning:
 			elements.extend([Image(png_file) for png_file in self.graph_generator.get_distribution_plots()])
-			#self.graph_generator.get_distribution_plots()
 
 		#Create and save the file.
 		doc = SimpleDocTemplate(self.filename)
