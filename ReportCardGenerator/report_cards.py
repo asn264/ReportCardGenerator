@@ -33,6 +33,7 @@ def main():
 		location_mode = Location_Toolkit(school_database,school_names)
 		schools,user_parameters = location_mode.get_schools_by_location() 
 		
+	#Here mode is necessarily 'names'
 	else:
 
 		#Prompts user to enter a list of school names to build a report
@@ -45,7 +46,10 @@ def main():
 
 	#Create a PDF report 
 	try:
-		writer = SummaryWriter(school_database, valid_features, filename, mode, schools, user_parameters)
+		if mode == 'name':
+			writer = SummaryWriter(school_database, valid_features, filename, mode, schools)
+		else:
+			writer = SummaryWriter(school_database, valid_features, filename, mode, schools, user_parameters)
 		writer.write_report()
 
 	except InvalidSummaryWriterError:

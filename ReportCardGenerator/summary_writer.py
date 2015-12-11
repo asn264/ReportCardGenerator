@@ -41,6 +41,7 @@ class SummaryWriter(object):
 			self.mode = mode
 			self.performance_params = valid_features
 			self.add_visualization_warning = False
+			self.add_distribution_warning = False
  			
  			try:
  				self.graph_generator = GraphGenerator(school_database,self.schools, defaultPageSize)
@@ -49,6 +50,10 @@ class SummaryWriter(object):
  			except InvalidComparisonError:
  				#Add a note to title page warning that there are no visualizations when len(self.schools) is 1
  				self.add_visualization_warning = True
+
+ 			#if there are less than 5 schools in the database, then distribution plots aren't displayed as there isn't enough data
+ 			if len(schools)<5:
+ 				self.add_distribution_warning = True
 
 			#Only name mode requires no user parameters. Raise an exception in other cases.
 			if len(user_params) == 0:
@@ -125,16 +130,35 @@ class SummaryWriter(object):
 
 		return Paragraph("The schools evaluated in this report are: " + ", ".join([str(school) for school in self.schools]) + ".", self.styles['Normal'])
 
+	def get_visualiation_warning(self):
+		'''creates a warning object if only one school is used to generate the report'''
+
+		return Paragraph("No visualizations were generated because only one school was used to generate the report.",self.styles['Normal'])
+
+	def get_distribution_warning(self):
+		'''creates a warning object if less than 5 schools are used to generate the report'''
+
+		return Paragraph("No boxplots/histograms were generated because only " + len(self.schools) + " schools were used to generate the report.\nAt least 5 schools are needed to generate visualizations showing the distribution of the data.",self.styles['Normal'])
 
 	def get_title_page(self):
 
 		'''Creates a template for the first page using the flowable objects: Spacer, Paragraph, PageBreak. Includes location query information in location mode.'''
-	
-		if self.mode == 'location':
-			return [self.big_spacer, self.get_title(), self.get_authors(), self.medium_spacer, self.get_mode(), self.describe_location_query(), self.get_schools(), PageBreak()]
-		else:
-			return [self.big_spacer, self.get_title(), self.get_authors(), self.medium_spacer, self.get_mode(), self.get_schools(), PageBreak()]
+		
+		base_page = [self.big_spacer, self.get_title(), self.get_authors(), self.medium_spacer, self.get_mode()]
 
+		if self.mode == 'location':
+			base_page.append(self.describe_location_query())
+		
+		base_page.append(self.get_schools())
+		
+		if self.add_visualization_warning:
+			base_page.append(self.medium_spacer,self.get_visualization_warning())
+		elif self.add_boxplot_warning:
+			base_page.append(self.medium_spacer,self.get_distribution_warning())
+
+		base_page.append(PageBreak())
+		
+		return base_page
 
 	def get_top10_schools_by_rank(self):
 
