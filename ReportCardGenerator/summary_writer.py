@@ -10,6 +10,7 @@ is essentially a large list of ReportLab objects which are then passed to Report
 '''
 
 import math
+import numpy as np
 from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
