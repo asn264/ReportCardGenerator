@@ -1,7 +1,10 @@
 '''
 Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
-This file generates visualizations of reportlab data using matplotlib. 
+This file generates visualizations of reportlab data using matplotlib
+There are two categories of plots: distribution plots and bar plots. Distribution plots consist of boxplots and histograms. 
+There are two helper functions, one for each category, that call each individual plot function to save that plot and 
+return all of the filenames, which are then used in the summary writer class.
 '''
 
 #import modules/classes
