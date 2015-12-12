@@ -56,6 +56,8 @@ def main():
 		print "Something went wrong."
 		sys.exit()
 
+	print "\nYour report is complete! Please refer to " + filename + "."
+
 	
 #Run the program
 if __name__ == "__main__":

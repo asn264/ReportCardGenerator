@@ -9,7 +9,7 @@ import os.path
 def prompt_for_filename():
 
 	'''Asks the user to choose a filename.'''
-	return raw_input("\nPlease enter a filename for your report using only alphanumeric characters and/or underscores. \nEntering \"report\" will generate the file \"report.pdf\". ")
+	return raw_input("\nPlease enter a filename for your report using only alphanumeric characters and/or underscores. \nEntering \"report\" will generate a report at \"reports/report.pdf\". ")
 
 
 def check_filename_exists(user_input):
@@ -63,8 +63,8 @@ def get_filename():
 			print "\nIllegal filename."
 			return get_filename()
 
-		#In order to check whether the file exists, we need to concatenate .pdf
-		user_input = user_input + ".pdf"
+		#In order to check whether the file exists, we need to concatenate "reports/" and ".pdf"
+		user_input = "reports/" + user_input + ".pdf"
 		if check_filename_exists(user_input): 
 			print "\nThis file already exists in the current directory."
 			return get_filename()
