@@ -1,3 +1,8 @@
+'''Author: Aditi Nair (asn264)
+
+Contains the school class, an instance of which represents one school in our school database,
+as well as the user defined exception InvalidSchoolNameError'''
+
 from utilities import *
 
 

@@ -1,3 +1,10 @@
+'''Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+
+This module contains the Location_Toolkit class, an instance of which represents an iteration of location mode. 
+In location mode, the user can provide an address or coordinates, and a radius. The user is shown how many 
+New York City high schools are within that radius of the address, and then the user provides how many of the
+closest schools they want to generate a report of. The customized report is then generated.'''
+
 #import modules/classes
 from school import *
 

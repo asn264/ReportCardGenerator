@@ -1,6 +1,8 @@
 '''
 Author: Aditi Nair (asn264)
 Date: December 5 2015
+
+This module prompts the user for a filename for the generated report. The input is then validated'''
 '''
 
 import sys

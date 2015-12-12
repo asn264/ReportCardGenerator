@@ -1,6 +1,6 @@
-"""Author: Akash Shah(ass502)
+"""Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
-This module contains a function and code used to load the necessary data from data frames and clean them. 
+This module contains the functions and code used to load the necessary data from data frames and clean them. 
 Then, they are all merged into one single database based on the unique school identification number (dbn).
 An additional column which contains the coordinates of the address is calculated and added."""
 

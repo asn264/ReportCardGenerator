@@ -1,3 +1,7 @@
+'''Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+
+This module loads the cleaned data and creates the array of valid features used throughout the program'''
+
 #import necessary libraries
 import pandas as pd
 import numpy as np

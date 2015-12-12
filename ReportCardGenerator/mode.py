@@ -1,8 +1,12 @@
+'''Author: Aditi Nair (asn264)
+
+This module prompts the user for the mode and validates the user input'''
+
 import sys
 
 def prompt_for_mode():
 
-	'''Asks the user to choose a mode. Accepts KeyboardInterrupt and EOFError.'''
+	'''Asks the user to choose a mode.'''
 	
 	return raw_input("\nEnter 'location' to generate reports by proximity and 'name' to search schools by name. \nType 'top10' to enter Top 10 mode. ")
 
