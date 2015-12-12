@@ -5,6 +5,8 @@ from school import *
 import matplotlib.pyplot as plt
 import warnings
 import os
+import errno
+import shutil
 
 class InvalidComparisonError(Exception):
 
@@ -17,6 +19,7 @@ class GraphGenerator(object):
 	'''Each instance of this object consists of a list of school objects that we want to compare by generating graphs'''
 
 	def __init__(self, school_database, schools, defaultPageSize):
+
 		if len(schools) > 1:
 			self.school_database = school_database
 			self.schools = schools
@@ -26,16 +29,18 @@ class GraphGenerator(object):
 			self.page_width = defaultPageSize[0]/80
 			self.page_height = defaultPageSize[1]/80
 
-			#create directory to save plots
+			#create a directory to store the plot png files in
 			script_dir = os.path.dirname(__file__)
-			plots_dir = os.path.join(script_dir, 'plots/')
-
-			if not os.path.isdir(plots_dir): #if the directory doesn't already exist, make it
-				os.makedirs(plots_dir)
+			self.plots_dir = os.path.join(script_dir, 'plots/')
+			#if the directory doesn't already exist, make it
+			if not os.path.isdir(self.plots_dir): 
+				os.makedirs(self.plots_dir)
 
 		else:
 			raise InvalidComparisonError
 
+	def clear_plots_directory(self):
+		shutil.rmtree(self.plots_dir)
 
 	def get_distribution_plots(self):
 
@@ -454,3 +459,5 @@ class GraphGenerator(object):
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
 		return 'plots/'+filename+'.png'
+
+
