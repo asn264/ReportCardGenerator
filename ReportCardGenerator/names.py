@@ -19,7 +19,7 @@ class Names_Toolkit(object):
 	def prompt_for_names():
 		'''Asks for a list of names.'''
 
-		return raw_input("\nEnter a list of comma-separated, high school names. If needed, see SchoolDirectory.txt for reference: ")
+		return raw_input("\nEnter a list of comma-separated, high school names. If needed, see school_directory.csv for reference: ")
 
 
 	def validate_names(self,input):
