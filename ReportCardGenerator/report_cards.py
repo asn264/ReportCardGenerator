@@ -51,7 +51,8 @@ def main():
 		writer = SummaryWriter(school_database, valid_features, filename, mode, schools, user_parameters)
 		
 	writer.write_report()
-	writer.graph_generator.clear_plots_directory()
+	if not writer.add_visualization_warning:
+		writer.graph_generator.clear_plots_directory()
 
 
 	print "\nYour report is complete! Please refer to " + filename + "."

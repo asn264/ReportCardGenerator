@@ -41,8 +41,8 @@ class School(object):
 	def get_name(self):
 		return self.name
 
-	def get_column_value(self, column_name):
-		return self.school_database[self.school_database['school_name']==self.name][column_name].values[0]
+	def get_column_value(self, column_name): 
+		return self.school_database[self.school_database['school_name'].str.lower()==self.name.lower()][column_name].values[0]
 
 
 
