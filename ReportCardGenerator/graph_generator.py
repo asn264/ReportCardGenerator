@@ -65,7 +65,7 @@ class GraphGenerator(object):
 				figures.append(self.create_sat_score_bar_plot(schools_to_plot[0:15],fig_index))
 				figures.append(self.create_sat_test_takers_bar_plot(schools_to_plot[0:15], fig_index))
 				figures.append(self.create_regents_bar_plot(schools_to_plot[0:15], fig_index))
-				figures.append(self.create_graduation_and_college_bar_plots(schools_to_plot[0:15], fig_index))
+				figures.extend(self.create_graduation_and_college_bar_plots(schools_to_plot[0:15], fig_index))
 				figures.append(self.create_student_satisfaction_bar_plots(schools_to_plot[0:15], fig_index))
 
 				#Delete already-plotted schools from the list and change the index
@@ -77,7 +77,7 @@ class GraphGenerator(object):
 		figures.append(self.create_sat_score_bar_plot(schools_to_plot, fig_index))
 		figures.append(self.create_sat_test_takers_bar_plot(schools_to_plot, fig_index))
 		figures.append(self.create_regents_bar_plot(schools_to_plot, fig_index))
-		figures.append(self.create_graduation_and_college_bar_plots(schools_to_plot, fig_index))
+		figures.extend(self.create_graduation_and_college_bar_plots(schools_to_plot, fig_index))
 		figures.append(self.create_student_satisfaction_bar_plots(schools_to_plot, fig_index))
 
 		#Returns a list of filenames indicating the address of the bar plots
@@ -193,9 +193,11 @@ class GraphGenerator(object):
 
 
 	def create_graduation_and_college_bar_plots(self, schools_to_plot, fig_index):
-		'''saves bar plots of ontrack graduation, graduation, and college career rates for each school'''
+		'''saves bar plots of ontrack graduation, graduation, and college career rates for each school, for 2012 and 2013'''
 
 		years = ['2012','2013']
+
+		filenames = []
 
 		#make bar plot for each year
 		for year in years:
@@ -242,10 +244,11 @@ class GraphGenerator(object):
 			lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 			#save plot
-			filename = 'graduation_and_college_barplots' + str(fig_index)
+			filename = year+'_graduation_and_college_barplots' + str(fig_index)
 			plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
+			filenames.append('plots/'+filename+'.png')
 
-			return 'plots/'+filename+'.png'
+		return filenames
 
 
 	def create_student_satisfaction_bar_plots(self, schools_to_plot, fig_index):
