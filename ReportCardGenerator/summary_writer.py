@@ -1,6 +1,12 @@
 '''
 Author: Aditi Nair
 Date: December 4th 2015
+
+The SummaryWriter object uses the open-source ReportLab package (http://www.reportlab.com/) to generate summary reports in PDF format. 
+It mainly uses the Paragraph, Spacer, and PageBreak objects to format the file neatly. It relies on the GraphGenerator object to create
+visualizations of the data. It uses representations of individual schools as School objects to query their information from the school_database.
+The report first contains text summaries of school performance metrics and then it displays the visualizations from GraphGenerator. Each report
+is essentially a large list of ReportLab objects which are then passed to ReportLab's 'build' function.
 '''
 
 import math
