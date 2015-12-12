@@ -1,5 +1,7 @@
 from unittest import TestCase
-from location import *
+
+from location_toolkit import *
+from utilities import *
 
 #load the cleaned database, the school names, and the valid features
 school_database,school_names,valid_features = load_session()

@@ -6,9 +6,9 @@ Created: November 13 2015
 
 #import modules/classes
 from mode import *
-from names import *
-from location import *
-from top10 import *
+from names_toolkit import *
+from location_toolkit import *
+from top10_toolkit import *
 from filename import *
 from summary_writer import *
 from utilities import *
