@@ -13,18 +13,6 @@ from school import *
 from graph_generator import *
 
 
-class InvalidSummaryWriterError(Exception):
-
-	'''This exception is raised if you try to create an instance of a SummaryWriter without passing it a list of School objects, 
-	or in one of the following cases:
-	(1) if mode == 'location' and user_params is not length two
-	(2) if mode == 'top10' and user_params is not length three
-	(3) if mode == 'name' and user_params is not length zero.
-	'''
-	pass
-
-
-
 class SummaryWriter(object):
 
 	'''Each instance of this object creates a single PDF file that contains general performance metrics for all schools in the list self.schools,
@@ -33,65 +21,46 @@ class SummaryWriter(object):
 
 	def __init__(self, school_database, valid_features, filename, mode, schools, user_params = []):
 
-		if all(isinstance(school, School) for school in schools):
-
-			#The following attributes define the report content, including attributes defined in the if/elif clauses below.
-			self.filename = filename
-			self.schools = schools
-			self.mode = mode
-			self.performance_params = valid_features
-			self.add_visualization_warning = False
-			self.add_distribution_warning = False
+		#The following attributes define the report content, including attributes defined in the try/except and if/elif clauses below.
+		self.filename = filename
+		self.schools = schools
+		self.mode = mode
+		self.performance_params = valid_features
  			
- 			try:
- 				self.graph_generator = GraphGenerator(school_database,self.schools, defaultPageSize)
-
- 			#This is raised when len(self.schools) is 1
- 			except InvalidComparisonError:
- 				#Add a note to title page warning that there are no visualizations when len(self.schools) is 1
- 				self.add_visualization_warning = True
-
- 			#if there are less than 5 schools in the database, then distribution plots aren't displayed as there isn't enough data
- 			if len(schools) < 5:
- 				self.add_distribution_warning = True
-
-			#Only name mode requires no user parameters. Raise an exception in other cases.
-			if len(user_params) == 0:
-				if mode != 'name':
-					raise InvalidSummaryWriterError
-
-			#Only location mode requires two user parameters: the location and the radius. Raise an exception in other cases.
-			elif len(user_params) == 2:
-				if mode == 'location':
-					self.location = user_params[0]
-					self.radius = user_params[1]
-				else:
-					raise InvalidSummaryWriterError
-
-			#Only top10 mode requires three user parameters: the features, the weights, and the scores. Raise an exception in other cases.
-			elif len(user_params) == 3:
-				if mode == 'top10':
-					self.features = user_params[0]
-					self.weights = user_params[1]
-					self.scores = user_params[2]
-				else:
-					raise InvalidSummaryWriterError
-
-			#The length of user_params must be 0, 2 or 3. If not, raise an Error.
-			else:
-				raise InvalidSummaryWriterError
+ 		#Create a GraphGenerator object which produces visualizations of the data using matplotlib. 
+ 		try:
+ 			self.graph_generator = GraphGenerator(school_database,self.schools, defaultPageSize)
+ 			self.add_visualization_warning = False
+ 		#This is raised when len(self.schools) is 1. We chose not to provide visualizations in this case.
+ 		except InvalidComparisonError:
+ 			self.add_visualization_warning = True
 
 
-			#The following define the report formatting. They are objects from ReportLab that help define the formatting of the output PDF file.
-			self.styles = getSampleStyleSheet()
-			self.small_spacer = KeepTogether(Spacer(1,0.05*inch))
-			self.medium_spacer = KeepTogether(Spacer(1,0.40*inch))
-			self.big_spacer = KeepTogether(Spacer(1,defaultPageSize[1]/4.0))
+ 		#if there are less than 5 schools in the database, then distribution plots aren't displayed as there isn't enough data
+ 		if len(schools) < 5:
+ 			self.add_distribution_warning = True
+ 		else: 
+ 			self.add_distribution_warning = False
 
 
-		#Raise an error if all of the items in schools are not School objects
-		else:
-			raise InvalidSummaryWriterError
+		#Here the mode is necessarily location. It requires two user parameters: the location and the radius.
+		if len(user_params) == 2:
+			self.location = user_params[0]
+			self.radius = user_params[1]
+
+
+		#Here the mode is necessarily top10. It requires three user parameters: the features, the weights, and the scores.
+		elif len(user_params) == 3:
+			self.features = user_params[0]
+			self.weights = user_params[1]
+			self.scores = user_params[2]
+
+
+		#The following attributes are objects from ReportLab that help define the formatting of the PDF report.
+		self.styles = getSampleStyleSheet()
+		self.small_spacer = KeepTogether(Spacer(1,0.05*inch))
+		self.medium_spacer = KeepTogether(Spacer(1,0.40*inch))
+		self.big_spacer = KeepTogether(Spacer(1,defaultPageSize[1]/4.0))
 
 
 	def get_title(self):

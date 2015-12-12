@@ -45,17 +45,14 @@ def main():
 	filename = get_filename()
 
 	#Create a PDF report 
-	try:
-		if mode == 'name':
-			writer = SummaryWriter(school_database, valid_features, filename, mode, schools)
-		else:
-			writer = SummaryWriter(school_database, valid_features, filename, mode, schools, user_parameters)
-		writer.write_report()
-		writer.graph_generator.clear_plots_directory()
+	if mode == 'name':
+		writer = SummaryWriter(school_database, valid_features, filename, mode, schools)
+	else:
+		writer = SummaryWriter(school_database, valid_features, filename, mode, schools, user_parameters)
+		
+	writer.write_report()
+	writer.graph_generator.clear_plots_directory()
 
-	except InvalidSummaryWriterError:
-		print "Something went wrong."
-		sys.exit()
 
 	print "\nYour report is complete! Please refer to " + filename + "."
 
