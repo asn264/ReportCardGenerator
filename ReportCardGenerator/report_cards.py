@@ -51,6 +51,7 @@ def main():
 		else:
 			writer = SummaryWriter(school_database, valid_features, filename, mode, schools, user_parameters)
 		writer.write_report()
+		writer.graph_generator.clear_plots_directory()
 
 	except InvalidSummaryWriterError:
 		print "Something went wrong."
