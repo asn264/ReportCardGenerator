@@ -1,5 +1,5 @@
 '''
-Author: Aditi Nair
+Author: Aditi Nair (asn264) and Akash Shah (ass502)
 Date: December 4th 2015
 
 The SummaryWriter object uses the open-source ReportLab package (http://www.reportlab.com/) to generate summary reports in PDF format. 

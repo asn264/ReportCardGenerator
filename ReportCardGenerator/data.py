@@ -1,8 +1,13 @@
-"""Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
-This module contains the functions and code used to load the necessary data from data frames and clean them. 
-Then, they are all merged into one single database based on the unique school identification number (dbn).
-An additional column which contains the coordinates of the address is calculated and added."""
+This module contains the functions and code used to load the school performance data from data frames and clean them. 
+Then they are all merged into one single database based on the unique school identification number (DBN).
+We added an additional column which contains the coordinates of the address, calculated using GeoPy.
+
+We output a csv file called school_database.csv. In the main program, this pre-formatted csv is loaded directly into a dataframe to avoid 
+slower runtime and to minimize queries to Google's geolocation services, which impose a strict limit on the number of queries in a 24-hour period.
+'''
 
 #import necessary libraries
 import pandas as pd

@@ -2,6 +2,8 @@
 Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 Created: November 13 2015
 
+This is the main program that interacts with the user. 
+Please consult README.pdf for instructions and additional information.
 '''
 
 #import modules/classes
@@ -15,8 +17,9 @@ from utilities import *
 
 
 def main():
-	#load the cleaned database, the school names, and the valid features
-	school_database,school_names,valid_features = load_session()
+
+	#load the cleaned database, the school names and the valid features
+	school_database, school_names, valid_features = load_session()
 
 	#Ask the user to choose a mode
 	mode = get_mode()
@@ -44,16 +47,18 @@ def main():
 	#Asks the user to choose a filename. Does not allow overwriting. 
 	filename = get_filename()
 
-	#Create a PDF report 
+	#Create an instance of the SummaryWriter
 	if mode == 'name':
 		writer = SummaryWriter(school_database, valid_features, filename, mode, schools)
 	else:
 		writer = SummaryWriter(school_database, valid_features, filename, mode, schools, user_parameters)
 		
+	#Create a PDF report using ReportLab
 	writer.write_report()
+
+	#If visualizations were provided, clear the temporary directory containing the .png files.
 	if not writer.add_visualization_warning:
 		writer.graph_generator.clear_plots_directory()
-
 
 	print "\nYour report is complete! Please refer to " + filename + "."
 

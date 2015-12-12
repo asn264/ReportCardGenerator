@@ -1,6 +1,9 @@
-'''Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
-This module loads the cleaned data and creates the array of valid features used throughout the program'''
+This module loads the cleaned data into a dataframe and creates the list of valid features used throughout the program, 
+as well as a list of the school names found in the database.
+'''
 
 #import necessary libraries
 import pandas as pd

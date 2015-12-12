@@ -1,6 +1,8 @@
-'''Author: Aditi Nair (asn264)
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
-This module prompts the user for the mode and validates the user input'''
+This module prompts the user to choose a mode. It only accepts one of the three available modes as user inputs. 
+'''
 
 import sys
 

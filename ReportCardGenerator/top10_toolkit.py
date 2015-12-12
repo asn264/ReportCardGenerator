@@ -1,8 +1,10 @@
-'''Author: Akash Shah (ass502)
+'''
+Authors: Akash Shah (ass502) and Aditi Nair (asn264)
 
 This module contains the Top10_Toolkit class, an instance of which represents an iteration of top10 mode. 
 In top10 mode, the user can provide features and weights that they care about. A customized report is 
-generated containing the 10 schools with the highest score based on those features and weights.'''
+generated containing the 10 schools with the highest score based on those features and weights.
+'''
 
 #import modules/classes
 from school import *

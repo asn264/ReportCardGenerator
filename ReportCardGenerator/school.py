@@ -1,7 +1,9 @@
-'''Author: Aditi Nair (asn264)
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
-Contains the school class, an instance of which represents one school in our school database,
-as well as the user defined exception InvalidSchoolNameError'''
+Contains the school class. Each instance of the class represents one school in our school database.
+There is a corresponding custom exception InvalidSchoolNameError for schools that are not in the database. 
+'''
 
 
 class InvalidSchoolNameError(Exception):
@@ -31,16 +33,14 @@ class School(object):
 
 
 	def __eq__(self, other):
-		'''Two School objects with the same attribute are equivalent.'''
+		'''Two School objects with the same name attribute are equivalent.'''
 
 		if isinstance(other, self.__class__):
 			return self.name == other.name
 		else:
 			return False
 
-	def get_name(self):
-		return self.name
-
+	#Looks in school_database in the column called column_name for the school with the name in self.name and returns the value
 	def get_column_value(self, column_name): 
 		return self.school_database[self.school_database['school_name'].str.lower()==self.name.lower()][column_name].values[0]
 

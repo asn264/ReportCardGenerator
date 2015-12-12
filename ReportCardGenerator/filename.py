@@ -1,8 +1,10 @@
 '''
-Author: Aditi Nair (asn264)
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 Date: December 5 2015
 
-This module prompts the user for a filename for the generated report. The input is then validated
+This module provides functions prompting the user for a filename for the performance report. 
+It only accepts filenames which do not already exist in the reports directory, and filenames composed 
+exclusively of alphanumeric and underscore characters.
 '''
 
 import sys

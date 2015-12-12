@@ -1,3 +1,9 @@
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+
+This file generates visualizations of reportlab data using matplotlib. 
+'''
+
 #import modules/classes
 from school import *
 

@@ -1,8 +1,12 @@
-'''Author: Aditi Nair (asn264)
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
 This module contains the Names_Toolkit class, an instance of which represents an iteration of names mode. 
-In names mode, the user can provide a list of NYC high schools. A customized report is 
-generated containing the valid schools in the user provided list'''
+In names mode, the user can provide a list of NYC high schools. If some of the user-provided schools are not 
+available in our database, we present the user with the option of continuing with the schools that are in
+our database, or with the option of presenting an entirely new list of schools. 
+
+'''
 
 from school import *
 import sys
