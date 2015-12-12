@@ -45,7 +45,8 @@ class GraphGenerator(object):
 	def get_distribution_plots(self):
 
 		'''Creates all of the boxplots/histograms and returns a list of all their filenames/address.'''
-		return [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
+		plots = [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
+		return [plot for plot in plots if plot is not None]
 
 	def get_bar_plots(self):
 
@@ -311,6 +312,11 @@ class GraphGenerator(object):
 		#append data from each section of the SAT
 		for section in sections:
 			section_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT '+section+' Avg']
+
+			#don't create boxplot if there are less than 5 data points
+			if len(section_data.dropna()) < 5:
+				return None
+
 			data.append(section_data)
 
 		#set size of figure
@@ -339,6 +345,10 @@ class GraphGenerator(object):
 		#get data for the number of test takers
 		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
+
+		#don't create histogram if there is less than 1 data point
+		if len(data.dropna()) < 1:
+			return None
 		
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
@@ -367,6 +377,11 @@ class GraphGenerator(object):
 		#append data from each month of the Regents data
 		for month in months:
 			month_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Regents Pass Rate - '+month]
+			
+			#don't create boxplot if there are less than 5 data points
+			if len(month_data.dropna()) < 5:
+				return None
+
 			data.append(month_data)
 
 		#set size of figure
@@ -397,12 +412,24 @@ class GraphGenerator(object):
 		years = ['2012','2013']
 		tick_labels = []
 
+		#keep track of whether there is at least one valid boxplot
+		valid_plot = False
+
 		#append data from each category
 		for category in categories:
 			for year in years:
 				category_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)][category + ' Rate - ' + year]
+				
+				#if there is enough data for at least one boxplot, the entire plot is valid
+				data_copy = category_data.copy()
+				if len(data_copy.dropna())>=5:
+					valid_plot=True
+
 				data.append(category_data)
 				tick_labels.append(category + ' - '+year)
+
+		if not valid_plot:
+			return None
 
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.6))
@@ -436,10 +463,22 @@ class GraphGenerator(object):
 		data=[]
 		years = ['2012','2013']
 
+		#keep track of whether there is at least one valid boxplot
+		valid_plot = False
+
 		#append data from each month of the Regents data
 		for year in years:
 			year_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - '+year]
+			
+			#if there is enough data for at least one boxplot, the entire plot is valid
+			data_copy = year_data.copy()
+			if len(data_copy.dropna())>=5:
+				valid_plot=True
+
 			data.append(year_data)
+
+		if not valid_plot:
+			return None
 
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.5))
