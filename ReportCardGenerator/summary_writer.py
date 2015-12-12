@@ -38,17 +38,17 @@ class SummaryWriter(object):
  		#Create a GraphGenerator object which produces visualizations of the data using matplotlib. 
  		try:
  			self.graph_generator = GraphGenerator(school_database,self.schools, defaultPageSize)
- 			self.add_visualization_warning = False
+ 			self.enable_visualizations = True
  		#This is raised when len(self.schools) is 1. We chose not to provide visualizations in this case.
  		except InvalidComparisonError:
- 			self.add_visualization_warning = True
+ 			self.enable_visualizations = False
 
 
  		#if there are less than 5 schools in the database, then distribution plots aren't displayed as there isn't enough data
  		if len(schools) < 5:
- 			self.add_distribution_warning = True
+ 			self.add_distribution_plots = False
  		else: 
- 			self.add_distribution_warning = False
+ 			self.add_distribution_plots = True
 
 
 		#Here the mode is necessarily location. It requires two user parameters: the location and the radius.
@@ -111,10 +111,13 @@ class SummaryWriter(object):
 
 		return Paragraph("Note: No visualizations were generated because only one school was used to create the report.",self.styles['Normal'])
 
-	def get_distribution_warning(self):
+	def get_distribution_plot_warning(self):
 		'''creates a warning object if less than 5 schools are used to generate the report'''
 
-		return Paragraph("Note: No boxplots/histograms were generated because only " + str(len(self.schools)) + " schools were used to create the report.\nAt least 5 schools are needed to generate valuable visualizations showing the distribution of the data.",self.styles['Normal'])
+		if self.add_distribution_plots:
+			return Paragraph("Note: Boxplots are not provided when the corresponding data is sparse. Some standard boxplots may be omitted.", self.styles['Normal'])
+		else:
+			return Paragraph("Note: No boxplots/histograms were generated because only " + str(len(self.schools)) + " schools were used to create the report.\nAt least 5 schools are needed to generate valuable visualizations showing the distribution of the data.",self.styles['Normal'])
 
 	def get_title_page(self):
 
@@ -127,13 +130,15 @@ class SummaryWriter(object):
 		
 		title_page.extend([self.get_schools(), self.medium_spacer])
 		
-		if self.add_visualization_warning:
-			title_page.append(self.get_visualization_warning())
-		elif self.add_distribution_warning:
-			title_page.append(self.get_distribution_warning())
-
-		title_page.append(PageBreak())
+		#If there are visualizations, we should say the appropriate boxplot warning W.R.T to the number of schools in the report and nothing else. 
+		if self.enable_visualizations:
+			#Add a boxplot warning for either no box_plots or limited box_plots and a pageBreak
+			title_page.extend([self.get_distribution_plot_warning(), PageBreak()])
 		
+		#If there are no visualizations, we should only say that there are no visualizations and nothing else
+		else:
+			title_page.extend([self.get_visualization_warning(), PageBreak()])
+
 		return title_page
 
 	def get_top10_schools_by_rank(self):
@@ -325,11 +330,11 @@ class SummaryWriter(object):
 		elements.extend(self.get_summaries())
 
 		#If there is more than one school in self.schools, add bar plots using graph generator object
-		if not self.add_visualization_warning:
+		if self.enable_visualizations:
 			elements.extend([Image(png_file) for png_file in self.graph_generator.get_bar_plots()])
 
 		#If there are at least five schools in self.schools, add distribution plots using the graph generator object
-		if not self.add_distribution_warning:
+		if self.add_distribution_plots:
 			elements.extend([Image(png_file) for png_file in self.graph_generator.get_distribution_plots()])
 
 		#Create and save the file.

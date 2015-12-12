@@ -57,7 +57,7 @@ def main():
 	writer.write_report()
 
 	#If visualizations were provided, clear the temporary directory containing the .png files.
-	if not writer.add_visualization_warning:
+	if writer.enable_visualizations:
 		writer.graph_generator.clear_plots_directory()
 
 	print "\nYour report is complete! Please refer to " + filename + "."
