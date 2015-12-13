@@ -71,7 +71,7 @@ class GraphGenerator(object):
 		max_schools_in_plot = 15
 		#Add an index to each png so they are not overwritten
 		fig_index = 1
-		figures = []
+		plots = []
 
 
 		#If the list of schools is larger than 15, generate many plots per plot type where each plot contains at most 15 and at least 5 schools
@@ -80,11 +80,11 @@ class GraphGenerator(object):
 			while len(schools_to_plot) >= max_schools_in_plot + min_schools_in_plot:
 
 				#Generate all the bar plots for the current subset of the list
-				figures.append(self.create_sat_score_bar_plot(schools_to_plot[0:15],fig_index))
-				figures.append(self.create_sat_test_takers_bar_plot(schools_to_plot[0:15], fig_index))
-				figures.append(self.create_regents_bar_plot(schools_to_plot[0:15], fig_index))
-				figures.extend(self.create_graduation_and_college_bar_plots(schools_to_plot[0:15], fig_index))
-				figures.append(self.create_student_satisfaction_bar_plots(schools_to_plot[0:15], fig_index))
+				plots.append(self.create_sat_score_bar_plot(schools_to_plot[0:15],fig_index))
+				plots.append(self.create_sat_test_takers_bar_plot(schools_to_plot[0:15], fig_index))
+				plots.append(self.create_regents_bar_plot(schools_to_plot[0:15], fig_index))
+				plots.extend(self.create_graduation_and_college_bar_plots(schools_to_plot[0:15], fig_index))
+				plots.append(self.create_student_satisfaction_bar_plots(schools_to_plot[0:15], fig_index))
 
 				#Delete already-plotted schools from the list and change the index
 				schools_to_plot = schools_to_plot[15:]
@@ -92,14 +92,14 @@ class GraphGenerator(object):
 
 
 		#If the list of schools is small enough, generate only one plot per plot type
-		figures.append(self.create_sat_score_bar_plot(schools_to_plot, fig_index))
-		figures.append(self.create_sat_test_takers_bar_plot(schools_to_plot, fig_index))
-		figures.append(self.create_regents_bar_plot(schools_to_plot, fig_index))
-		figures.extend(self.create_graduation_and_college_bar_plots(schools_to_plot, fig_index))
-		figures.append(self.create_student_satisfaction_bar_plots(schools_to_plot, fig_index))
+		plots.append(self.create_sat_score_bar_plot(schools_to_plot, fig_index))
+		plots.append(self.create_sat_test_takers_bar_plot(schools_to_plot, fig_index))
+		plots.append(self.create_regents_bar_plot(schools_to_plot, fig_index))
+		plots.extend(self.create_graduation_and_college_bar_plots(schools_to_plot, fig_index))
+		plots.append(self.create_student_satisfaction_bar_plots(schools_to_plot, fig_index))
 
 		#Returns a list of filenames indicating the address of the bar plots
-		return figures
+		return [plot for plot in plots if plot is not None]
 
 
 	def create_sat_score_bar_plot(self, schools_to_plot, fig_index):
@@ -110,6 +110,10 @@ class GraphGenerator(object):
 		math_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Math Avg'].dropna()
 		reading_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Critical Reading Avg'].dropna()
 		writing_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Writing Avg'].dropna()
+
+		#don't do bar plot if there is only one school
+		if len(math_data)<=1:
+			return None
 
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
@@ -139,6 +143,8 @@ class GraphGenerator(object):
 		filename = 'sat_barplot' + str(fig_index)
 		plt.savefig('plots/' + filename + '.png',bbox_extra_artists=(lgd,), bbox_inches = 'tight')
 
+		plt.close()
+
 		return 'plots/'+ filename + '.png'
 
 
@@ -148,6 +154,10 @@ class GraphGenerator(object):
 		#get data for the number of test takers
 		data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Number of SAT Test Takers']
 		data = data.dropna()
+
+		#don't do bar plot if there is only one school
+		if len(data)<=1:
+			return None
 
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.6))
@@ -168,6 +178,8 @@ class GraphGenerator(object):
 		filename = 'sat_test_takers_barplot' + str(fig_index)
 		plt.savefig('Plots/' + filename +'.png', bbox_inches='tight')
 
+		plt.close()
+
 		return 'plots/'+filename+'.png'
 
 
@@ -179,6 +191,10 @@ class GraphGenerator(object):
 		august_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - August']
 		june_data = june_data.dropna()
 		august_data = august_data.dropna()
+
+		#don't do bar plot if there is only one school
+		if len(june_data)<=1:
+			return None
 
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
@@ -207,6 +223,8 @@ class GraphGenerator(object):
 		filename = 'regents_barplot' + str(fig_index)
 		plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
 
+		plt.close()
+
 		return 'plots/'+filename+'.png'
 
 
@@ -234,37 +252,44 @@ class GraphGenerator(object):
 			graduation_data = graduation_data.drop(rows_to_drop)
 			college_data = college_data.drop(rows_to_drop)
 
-			#clear plot
-			plt.clf()
+			#if there is one school or less for each category, don't do the bar plot
+			if len(ontrack_data)<=1 and len(graduation_data)<=1 and len(college_data)<=1:
+				pass
 
-			#set size of figure
-			plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
+			else:
+				#clear plot
+				plt.clf()
 
-			#create a bar for each category
-			bar_width = 0.2
-			rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Ontrack')
-			rects2 = plt.bar(np.arange(len(graduation_data))+bar_width, graduation_data, bar_width,color='r',label='Graduation')
-			rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College')
+				#set size of figure
+				plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
 
-			#set labels, titles, and ticks with school names
-			plt.xlabel('Schools')
-			plt.ylabel('Rate (%)')
-			plt.title('Graduation and College Rates by School in '+year)
-			plt.xticks(np.arange(len(graduation_data)) + 1.5*bar_width, self.names,fontsize=8)
-			plt.xticks(rotation=90)
+				#create a bar for each category
+				bar_width = 0.2
+				rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Ontrack')
+				rects2 = plt.bar(np.arange(len(graduation_data))+bar_width, graduation_data, bar_width,color='r',label='Graduation')
+				rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College')
 
-			#catches user warning rather than printing it
-			with warnings.catch_warnings():
-				warnings.simplefilter("ignore", UserWarning)
-				plt.tight_layout()
+				#set labels, titles, and ticks with school names
+				plt.xlabel('Schools')
+				plt.ylabel('Rate (%)')
+				plt.title('Graduation and College Rates by School in '+year)
+				plt.xticks(np.arange(len(graduation_data)) + 1.5*bar_width, self.names,fontsize=8)
+				plt.xticks(rotation=90)
 
-			#put legend outside of plot
-			lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+				#catches user warning rather than printing it
+				with warnings.catch_warnings():
+					warnings.simplefilter("ignore", UserWarning)
+					plt.tight_layout()
 
-			#save plot
-			filename = year+'_graduation_and_college_barplots' + str(fig_index)
-			plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
-			filenames.append('plots/'+filename+'.png')
+				#put legend outside of plot
+				lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+				#save plot
+				filename = year+'_graduation_and_college_barplots' + str(fig_index)
+				plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
+				filenames.append('plots/'+filename+'.png')
+
+		plt.close()
 
 		return filenames
 
@@ -284,6 +309,10 @@ class GraphGenerator(object):
 				rows_to_drop.append(row_index)
 		data_2012 = data_2012.drop(rows_to_drop)
 		data_2013 = data_2013.drop(rows_to_drop)
+
+		#if there is one school or less for each year, don't do the bar plot
+		if len(data_2012)<=1 and len(data_2013)<=1:
+			return None
 
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.6,self.page_height*.6))
@@ -311,6 +340,8 @@ class GraphGenerator(object):
 		#save plot
 		filename = 'student_satisfaction_barplots' + str(fig_index)
 		plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+		plt.close()
 
 		return 'plots/'+filename+'.png'
 
@@ -348,6 +379,8 @@ class GraphGenerator(object):
 		filename = 'sat_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
+		plt.close()
+
 		return 'plots/'+filename+'.png'
 
 
@@ -376,6 +409,8 @@ class GraphGenerator(object):
 		#save plot
 		filename = 'sat_test_takers_histogram'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
+
+		plt.close()
 
 		return 'plots/'+filename+'.png'
 	
@@ -412,6 +447,8 @@ class GraphGenerator(object):
 		#save plot
 		filename = 'regents_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
+
+		plt.close()
 
 		return 'plots/'+filename+'.png'
 
@@ -466,6 +503,8 @@ class GraphGenerator(object):
 		filename = 'graduation_and_college_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
+		plt.close()
+
 		return 'plots/'+filename+'.png'
 
 
@@ -508,6 +547,8 @@ class GraphGenerator(object):
 		#save plot
 		filename = 'student_satisfaction_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
+
+		plt.close()
 
 		return 'plots/'+filename+'.png'
 
