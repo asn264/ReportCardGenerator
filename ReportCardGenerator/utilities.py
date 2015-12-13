@@ -14,7 +14,7 @@ def load_session():
 	'''loads a dataframe containing the cleaned data, and a dataframe containing the unique school names'''
 
 	try:
-		school_database = pd.read_csv('database.csv')
+		school_database = pd.read_csv('data/database.csv')
 
 		#Note there are no duplicates in this list. We cast it to lower-case so that we can build more flexibility in accepting user input with different capitalizations. 
 		school_names = pd.unique(school_database['school_name'].str.lower().values.ravel())

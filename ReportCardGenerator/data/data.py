@@ -39,15 +39,15 @@ def loadDataframe(filename,relevant,columns,nullValues):
 nullValues=['s','.','N/A']
 
 #load dataframes from each of our 4 data sources
-schools = loadDataframe('data/DOE_High_School_Directory_2014-2015.csv',True,['dbn','school_name','primary_address_line_1','city'],nullValues)
+schools = loadDataframe('raw_data/DOE_High_School_Directory_2014-2015.csv',True,['dbn','school_name','primary_address_line_1','city'],nullValues)
 
-sat_scores = loadDataframe('data/SAT_Results.csv',False,'school name',nullValues)
+sat_scores = loadDataframe('raw_data/SAT_Results.csv',False,'school name',nullValues)
 
-regents_performance = loadDataframe('data/Graduation_Outcomes_-_Class_Of_2010_-_Regents-based_Math-_ELA_APM_-_School_Level.csv',False,'name',nullValues)
+regents_performance = loadDataframe('raw_data/Graduation_Outcomes_-_Class_Of_2010_-_Regents-based_Math-_ELA_APM_-_School_Level.csv',False,'name',nullValues)
 regents_performance = regents_performance[regents_performance['demographic'] == 'All Students']
 regents_performance.drop(['demographic'],axis=1,inplace=True)
 
-school_performance = loadDataframe('data/DOE_High_School_Performance-Directory_2014-2015.csv',False,['quality_review_rating','quality_review_year','ontrack_year1_historic_avg_similar_schls','graduation_rate_historic_avg_similar_schls','college_career_rate_historic_avg_similar_schls','student_satisfaction_historic_avg_similar_schls'],nullValues)
+school_performance = loadDataframe('raw_data/DOE_High_School_Performance-Directory_2014-2015.csv',False,['quality_review_rating','quality_review_year','ontrack_year1_historic_avg_similar_schls','graduation_rate_historic_avg_similar_schls','college_career_rate_historic_avg_similar_schls','student_satisfaction_historic_avg_similar_schls'],nullValues)
 
 
 #do a left join on the tables starting with school, on the dbn column which uniquely identifies the school
