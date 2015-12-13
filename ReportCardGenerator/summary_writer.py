@@ -9,14 +9,18 @@ The report first contains text summaries of school performance metrics and then 
 is essentially a large list of ReportLab objects which are then passed to ReportLab's 'build' function.
 '''
 
+#import necessary libraries
 import math
 import numpy as np
+
+#import ReportLab libraries
 from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
 
+#import classes/modules
 from school import *
 from graph_generator import *
 

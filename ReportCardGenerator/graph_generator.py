@@ -1,7 +1,7 @@
 '''
 Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
-This file generates visualizations of reportlab data using matplotlib
+This file generates visualizations of reportlab data using matplotlib.
 There are two categories of plots: distribution plots and bar plots. Distribution plots consist of boxplots and histograms. 
 There are two helper functions, one for each category, that call each individual plot function to save that plot and 
 return all of the filenames, which are then used in the summary writer class.
@@ -37,7 +37,7 @@ class GraphGenerator(object):
 			self.schools = schools
 			self.names =[str(school) for school in schools]
 
-			#convert from pixels to inches (80 pixels to an inch)
+			#convert defaultPageSize from pixels to inches (80 pixels to an inch)
 			self.page_width = defaultPageSize[0]/80
 			self.page_height = defaultPageSize[1]/80
 
@@ -52,11 +52,14 @@ class GraphGenerator(object):
 			raise InvalidComparisonError
 
 	def clear_plots_directory(self):
+		'''function that deletes the plots directory as well as its contents'''
+
 		shutil.rmtree(self.plots_dir)
 
 	def get_distribution_plots(self):
 
 		'''Creates all of the boxplots/histograms and returns a list of all their filenames/address.'''
+
 		plots = [self.create_sat_score_boxplots(), self.create_sat_test_takers_histogram(), self.create_regents_box_plots(), self.create_graduation_and_college_box_plots(), self.create_student_satisfaction_box_plots()]
 		return [plot for plot in plots if plot is not None]
 
@@ -69,10 +72,11 @@ class GraphGenerator(object):
 		schools_to_plot = self.names
 		min_schools_in_plot = 5
 		max_schools_in_plot = 15
+
 		#Add an index to each png so they are not overwritten
 		fig_index = 1
-		plots = []
 
+		plots = []
 
 		#If the list of schools is larger than 15, generate many plots per plot type where each plot contains at most 15 and at least 5 schools
 		if len(schools_to_plot) > max_schools_in_plot:
@@ -143,6 +147,7 @@ class GraphGenerator(object):
 		filename = 'sat_barplot' + str(fig_index)
 		plt.savefig('plots/' + filename + '.png',bbox_extra_artists=(lgd,), bbox_inches = 'tight')
 
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+ filename + '.png'
@@ -163,6 +168,8 @@ class GraphGenerator(object):
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.6))
 
 		plt.bar(np.arange(len(data)),data,align='center')
+
+		#set labels, titles, and ticks with school names
 		plt.xlabel('Schools')
 		plt.ylabel('Number of Students')
 		plt.xticks(np.arange(len(data)), self.names,fontsize=8)
@@ -178,6 +185,7 @@ class GraphGenerator(object):
 		filename = 'sat_test_takers_barplot' + str(fig_index)
 		plt.savefig('Plots/' + filename +'.png', bbox_inches='tight')
 
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'
@@ -223,6 +231,8 @@ class GraphGenerator(object):
 		filename = 'regents_barplot' + str(fig_index)
 		plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
 
+
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'
@@ -233,6 +243,7 @@ class GraphGenerator(object):
 
 		years = ['2012','2013']
 
+		#store filename of the plot for each year
 		filenames = []
 
 		#make bar plot for each year
@@ -289,6 +300,7 @@ class GraphGenerator(object):
 				plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
 				filenames.append('plots/'+filename+'.png')
 
+		#close plot to free up memory
 		plt.close()
 
 		return filenames
@@ -341,6 +353,8 @@ class GraphGenerator(object):
 		filename = 'student_satisfaction_barplots' + str(fig_index)
 		plt.savefig('plots/'+filename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
 
+
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'
@@ -379,6 +393,8 @@ class GraphGenerator(object):
 		filename = 'sat_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
+
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'
@@ -410,6 +426,8 @@ class GraphGenerator(object):
 		filename = 'sat_test_takers_histogram'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
+
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'
@@ -448,6 +466,7 @@ class GraphGenerator(object):
 		filename = 'regents_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'
@@ -464,7 +483,7 @@ class GraphGenerator(object):
 		#keep track of whether there is at least one valid boxplot
 		valid_plot = False
 
-		#append data from each category
+		#append data from each category and year
 		for category in categories:
 			for year in years:
 				category_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)][category + ' Rate - ' + year]
@@ -475,6 +494,8 @@ class GraphGenerator(object):
 					valid_plot=True
 
 				data.append(category_data)
+
+				#create tick label for the current plot based on the category and year
 				tick_labels.append(category + ' - '+year)
 
 		if not valid_plot:
@@ -503,6 +524,7 @@ class GraphGenerator(object):
 		filename = 'graduation_and_college_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'
@@ -548,6 +570,7 @@ class GraphGenerator(object):
 		filename = 'student_satisfaction_boxplots'
 		plt.savefig('plots/'+filename+'.png', bbox_inches='tight')
 
+		#close plot to free up memory
 		plt.close()
 
 		return 'plots/'+filename+'.png'

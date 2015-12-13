@@ -4,8 +4,8 @@ Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 This module contains the Location_Toolkit class, an instance of which represents an iteration of location mode. 
 In location mode, the user can provide an address or coordinates and a radius. The starting location must be in one 
 of the cities that appears in our database.
-The user is shown how many New York City high schools are within that radius of the address, and then the user provides how many of the
-closest schools they want to generate a report of.
+The user is shown how many New York City high schools are within that radius of the address, and then the user provides 
+how many of the closest schools they want to generate a report of.
 '''
 
 #import modules/classes
@@ -41,7 +41,7 @@ class Location_Toolkit(object):
 		#Get all schools within the input radius of the specified location
 		names,input_radius = self.find_schools_in_radius(location,self.get_radius())
 
-		while len(names)==0:
+		while len(names)==0: #if there are no schools in the radius
 			self.no_schools()
 			names,input_radius = self.find_schools_in_radius(location,self.get_radius())
 
@@ -95,6 +95,7 @@ class Location_Toolkit(object):
 		'''Makes a best guess of user provided input using Google Maps. 
 		Complains if the (best-guess) city is not a city that appears in the school database.'''
 
+		#uses GoogleV3 API to validate addresses
 		g = geocoders.GoogleV3()
 
 		if input.strip().lower() == 'quit':
@@ -150,7 +151,7 @@ class Location_Toolkit(object):
 	def prompt_for_radius():
 		'''Asks the user to provide a positive-valued radius'''
 
-		return raw_input("\nEnter a radius: ")
+		return raw_input("\nEnter a radius in miles: ")
 
 	@staticmethod
 	def validate_radius(input):
