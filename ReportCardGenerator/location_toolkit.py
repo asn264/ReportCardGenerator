@@ -60,30 +60,18 @@ class Location_Toolkit(object):
 
 
 	def find_schools_in_radius(self,coordinates,radius):
+
 		'''Function that returns the names of all schools within a specified radius of a location, sorted by distance.'''
 
-		names=[]
-		distances=[]
-		for row in range(len(self.school_database)):
-			#calculate vincenty distance in miles
-			distance = vincenty(coordinates,self.school_database.iloc[row]['coordinates']).miles
-			
-			if distance <= radius:
-				names.append(self.school_database.iloc[row]['school_name'])
-				distances.append(distance)
-		return self.sort_schools_by_distance(names,distances),radius
+		#Add a new column which shows the distance of each school from the coordinates
+		self.school_database['distances'] = self.school_database['coordinates'].apply(lambda x: vincenty(coordinates, x).miles)
 
-	@staticmethod
-	def sort_schools_by_distance(names,distances):
-		'''modified implementation of bubble sort, sorting names based on distance'''
-		
-		for i in range(len(distances)):
-			for j in range(len(distances)-1-i):
-				if distances[j]>distances[j+1]:
-					distances[j],distances[j+1]=distances[j+1],distances[j]
-					names[j],names[j+1]=names[j+1],names[j]
-		
-		return names
+		#Sort the dataframe by distance
+		self.school_database.sort('distances', inplace=True)
+
+		#Return a list of the schools with radius distance of the coordinates and the actual radius
+		return self.school_database['school_name'][self.school_database['distances']<radius].tolist(), radius
+
 
 	@staticmethod
 	def prompt_for_location():
@@ -226,3 +214,6 @@ class Location_Toolkit(object):
 		else:
 			print "\nInvalid number."
 			return self.get_number(length)
+
+
+
