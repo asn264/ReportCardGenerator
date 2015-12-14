@@ -20,11 +20,12 @@ def loadDataframe(filename,relevant,columns,nullValues):
 	"""function to load data from csv and do some basic cleaning"""
 
 	data_df = pd.read_csv(filename)
-	data_df.columns = [col.lower() for col in data_df.columns]
+	data_df.columns = map(str.lower, data_df.columns)
         
-	#determine whether to keep each column in columns or drop each 
+	#if relevant is True, columns is the list of columns we want so we filter for those 
 	if relevant:
 		data_df = data_df[columns]
+	#if relevant is False, columns is the list of columns we don't want so we drop them
 	else:
 		data_df.drop(columns,axis=1,inplace=True)
 
