@@ -15,7 +15,8 @@ class InvalidSchoolNameError(Exception):
 
 
 class School(object):
-	'''Each instance of the schoolReport represents all of the performance data in the database pertaining to a single school name.'''
+	'''Each instance of the School object represents a single school identified uniquely by name. 
+	It provides the functionality to access all of the available performance data for that school.'''
 	
 	def __init__(self, school_database, school_names, name):
 		'''Raises an error if name is not the name of a school in the database. Otherwise simply uses the name to later choose a row in the database dateframe.'''

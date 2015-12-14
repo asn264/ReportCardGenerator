@@ -25,10 +25,12 @@ def check_filename_exists(user_input):
 
 def check_legal_filename(user_input):
 
-	'''Ensures that filenames are safe. Conservatively, we will force the user to only use filenames that have alphanumeric characters and underscores.'''
+	'''Ensures that filenames are safe. Conservatively, we will force the user to use filenames that have only alphanumeric characters and underscores.'''
 	
+	#Do not accept empty input
 	if len(user_input)==0:
 		return False
+
 	else:
 
 		#If the string is fully alphanumeric, return True - it *is* legal.
@@ -70,7 +72,7 @@ def get_filename():
 		#In order to check whether the file exists, we need to concatenate "reports/" and ".pdf"
 		user_input = "reports/" + user_input + ".pdf"
 		if check_filename_exists(user_input): 
-			print "\nThis file already exists in the current directory."
+			print "\nThis file already exists in the reports directory."
 			return get_filename()
 
 		return user_input

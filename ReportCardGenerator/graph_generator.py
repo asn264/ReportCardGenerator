@@ -52,7 +52,7 @@ class GraphGenerator(object):
 			raise InvalidComparisonError
 
 	def clear_plots_directory(self):
-		'''function that deletes the plots directory as well as its contents'''
+		'''Deletes the plots directory as well as its contents.'''
 
 		shutil.rmtree(self.plots_dir)
 
@@ -95,7 +95,8 @@ class GraphGenerator(object):
 				fig_index += 1
 
 
-		#If the list of schools is small enough, generate only one plot per plot type
+		#If the list of schools is small enough, generate only one plot per plot type. 
+		#Functions below return file addresses if graphs were generated or None if the necessary data was sparse
 		plots.append(self.create_sat_score_bar_plot(schools_to_plot, fig_index))
 		plots.append(self.create_sat_test_takers_bar_plot(schools_to_plot, fig_index))
 		plots.append(self.create_regents_bar_plot(schools_to_plot, fig_index))
@@ -157,8 +158,7 @@ class GraphGenerator(object):
 		'''saves a bar plot of the number of students who took the SAT by school'''
 
 		#get data for the number of test takers
-		data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Number of SAT Test Takers']
-		data = data.dropna()
+		data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Number of SAT Test Takers'].dropna()
 
 		#don't do bar plot if there is only one school
 		if len(data)<=1:
@@ -195,10 +195,8 @@ class GraphGenerator(object):
 		'''Saves a bar plot of the percent of students that passed the Regents exam in June and August'''
 
 		#get Regents data for each month
-		june_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - June']
-		august_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - August']
-		june_data = june_data.dropna()
-		august_data = august_data.dropna()
+		june_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - June'].dropna()
+		august_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - August'].dropna()
 
 		#don't do bar plot if there is only one school
 		if len(june_data)<=1:

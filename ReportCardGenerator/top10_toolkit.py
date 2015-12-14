@@ -17,7 +17,7 @@ import numpy as np
 class Top10_Toolkit(object):
 
 	def __init__(self, school_database, school_names, valid_features):
-		'''create instance of top10 mode, instance variables contain the relevant data'''
+		'''Create instance of top10 mode, instance variables contain the relevant data'''
 
 		self.school_database = school_database
 		self.school_names = school_names
@@ -25,19 +25,19 @@ class Top10_Toolkit(object):
 
 	@staticmethod
 	def prompt_for_initial_feature():
-		'''prompts the user to input a feature along with an integer weight between 1 and 100, separated by a comma'''
+		'''Prompts the user to input a feature along with an integer weight between 1 and 100, separated by a comma.'''
 
 		return raw_input("\nEnter a feature followed by an integer weight between 1 and 100, separated by a comma: ")
 
 	@staticmethod
 	def prompt_for_additional_feature():
-		'''prompts the user to input another feature along with an integer weight between 1 and 100, separated by a comma'''
+		'''Prompts the user to input another feature along with an integer weight between 1 and 100, separated by a comma'''
 
 		return raw_input("\nEnter another feature followed by an integer weight between 1 and 100, separated by a comma. \nType finish to calculate the top 10: ")
 
 
 	def validate_feature(self,input,current_features):
-		'''validates user input of a feature and a weight'''
+		'''Validates user input of a feature and a weight'''
 
 		if input.strip().lower() == 'quit':
 			sys.exit()

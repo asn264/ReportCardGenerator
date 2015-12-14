@@ -75,6 +75,7 @@ class Names_Toolkit(object):
 
 		passed, failed = self.validate_names(self.prompt_for_names())
 
+		#If at least one of the comma-separated substrings does not match a school name, or if the user simply presses enter at the prompt.
 		if len(failed) > 0:
 			
 			if len(passed) == 0:
@@ -83,9 +84,9 @@ class Names_Toolkit(object):
 
 			else:
 
-				print "\nThe following schools are not available in our directory: ", 
+				print "\nThe following schools are not available in our directory: \n", 
 				for school in failed:
-					print school+",",
+					print school+"\n",
 
 				#Give the user the option to continue if there are some valid names in the list. 			
 				return list(set(passed)) if self.ignore_invalid_names(self.prompt_to_ignore_invalid_names()) == True else self.get_schools_by_name()

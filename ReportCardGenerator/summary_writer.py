@@ -110,13 +110,16 @@ class SummaryWriter(object):
 
 		return Paragraph("The schools evaluated in this report are: " + ", ".join([str(school) for school in self.schools]) + ".", self.styles['Normal'])
 
+
 	def get_visualization_warning(self):
-		'''creates a warning object if only one school is used to generate the report'''
+
+		'''Creates a warning paragraph if only one school is used to generate the report.'''
 
 		return Paragraph("Note: No visualizations were generated because only one school was used to create the report.",self.styles['Normal'])
 
+
 	def get_distribution_plot_warning(self):
-		'''creates a warning object if less than 5 schools are used to generate the report'''
+		'''Creates a warning paragraph if less than 5 schools are used to generate the report.'''
 
 		if self.add_distribution_plots:
 			return Paragraph("Note: Boxplots are not provided when the corresponding data is sparse. Some standard boxplots may be omitted.", self.styles['Normal'])
@@ -136,7 +139,7 @@ class SummaryWriter(object):
 		
 		#If there are visualizations, we should say the appropriate boxplot warning W.R.T to the number of schools in the report and nothing else. 
 		if self.enable_visualizations:
-			#Add a boxplot warning for either no box_plots or limited box_plots and a pageBreak
+			#Add a boxplot warning for either no distribution plot or limited distribution plots and a pageBreak
 			title_page.extend([self.get_distribution_plot_warning(), PageBreak()])
 		
 		#If there are no visualizations, we should only say that there are no visualizations and nothing else
@@ -271,7 +274,7 @@ class SummaryWriter(object):
 
 	def get_school_summary(self, school, rank=None):
 
-		'''Returns a list of Paragraph objects summarizing basic school information.'''
+		'''Returns a list of Paragraph objects summarizing basic information for a single school. In top10 mode, rank reflects the ranking of the school.'''
 
  		#Summary is now a list of paragraph objects containing the school name and address.
 		summary = self.get_basic_info(school, rank)
@@ -306,7 +309,7 @@ class SummaryWriter(object):
 
 	def get_summaries(self):
 
-		'''A list of summaries for each school. Each item in summaries is itself a list of Paragraph objects, 
+		'''A list of summaries, one for each school. Each item in summaries is itself a list of Paragraph objects, 
 		containing headings and spacing as necessary.'''
 
 		summaries = []

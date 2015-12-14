@@ -24,7 +24,8 @@ from geopy.exc import GeocoderTimedOut, GeocoderParseError, GeocoderQueryError, 
 class Location_Toolkit(object):
 
 	def __init__(self, school_database, school_names):
-		'''create instance of top10 mode, instance variables contain the relevant data'''
+
+		'''Create instance of location mode, instance variables contain the relevant data'''
 
 		self.school_database = school_database
 		self.school_names = school_names
@@ -32,8 +33,8 @@ class Location_Toolkit(object):
 
 
 	def get_schools_by_location(self):
-		'''uses helper functions in the location module to prompt the user for a location and radius, 
-		and the number of schools within that radius to generate a report of. A list of school objects is returned'''
+		'''Uses helper functions in the location module to prompt the user for a location and radius, 
+		and the number of schools within that radius to generate a report of. A list of school objects is returned.'''
 
 		#Get location from the user
 		location,input_location = self.get_location()
@@ -59,7 +60,7 @@ class Location_Toolkit(object):
 
 
 	def find_schools_in_radius(self,coordinates,radius):
-		'''function that returns the names of all schools within a specified radius of a location, sorted by distance'''
+		'''Function that returns the names of all schools within a specified radius of a location, sorted by distance.'''
 
 		names=[]
 		distances=[]
