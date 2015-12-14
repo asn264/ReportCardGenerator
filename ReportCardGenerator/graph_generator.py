@@ -486,7 +486,7 @@ class GraphGenerator(object):
 			for year in years:
 				category_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)][category + ' Rate - ' + year]
 				
-				#if there is enough data for at least one boxplot, the entire plot is valid
+				#if there is enough data for at least one type of boxplot, the entire group of plots is valid
 				data_copy = category_data.copy()
 				if len(data_copy.dropna())>=5:
 					valid_plot=True
@@ -541,7 +541,7 @@ class GraphGenerator(object):
 		for year in years:
 			year_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - '+year]
 			
-			#if there is enough data for at least one boxplot, the entire plot is valid
+			##if there is enough data for at least one year's boxplot, the entire group of plots is valid
 			data_copy = year_data.copy()
 			if len(data_copy.dropna())>=5:
 				valid_plot=True
