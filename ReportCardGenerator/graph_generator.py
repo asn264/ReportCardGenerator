@@ -111,13 +111,11 @@ class GraphGenerator(object):
 
 		'''Saves a bar plot of the SAT scores by section for each school.'''
 
-		#Get SAT score data for each section, dropping NaN values. Avoid searching the dataframe multiple times.
-		math_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Math Avg'].dropna()
-		reading_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Critical Reading Avg'].dropna()
-		writing_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['SAT Writing Avg'].dropna()
+		#get SAT score data for all three sections, dropping rows with missing data for all of the sections
+		data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in schools_to_plot])][['school_name','SAT Math Avg','SAT Critical Reading Avg','SAT Writing Avg']].dropna(thresh=2)
 
 		#don't do bar plot if there is only one school
-		if len(math_data)<=1:
+		if len(data)<=1:
 			return None
 
 		#set size of figure
@@ -125,15 +123,15 @@ class GraphGenerator(object):
 
 		#create a bar for each month
 		bar_width = 0.2
-		rects1 = plt.bar(np.arange(len(math_data)), math_data, bar_width, color='b', label='Math')
-		rects2 = plt.bar(np.arange(len(reading_data)) + bar_width, reading_data, bar_width, color='r', label='Reading')
-		rects3 = plt.bar(np.arange(len(writing_data)) + 2 * bar_width, writing_data, bar_width, color='g', label='Writing')
+		rects1 = plt.bar(np.arange(len(data)), data['SAT Math Avg'], bar_width, color='b', label='Math')
+		rects2 = plt.bar(np.arange(len(data)) + bar_width, data['SAT Critical Reading Avg'], bar_width, color='r', label='Reading')
+		rects3 = plt.bar(np.arange(len(data)) + 2 * bar_width, data['SAT Writing Avg'], bar_width, color='g', label='Writing')
 
 		#set labels, titles, and ticks with school names
 		plt.xlabel('Schools')
 		plt.ylabel('SAT Score')
 		plt.title('SAT Scores by School')
-		plt.xticks(np.arange(len(math_data)) + 1.5*bar_width, self.names, fontsize=8)
+		plt.xticks(np.arange(len(data)) + 1.5*bar_width, data['school_name'].tolist(), fontsize=8)
 		plt.xticks(rotation=90)
 
 		#catches user warning rather than printing it
@@ -157,8 +155,8 @@ class GraphGenerator(object):
 	def create_sat_test_takers_bar_plot(self, schools_to_plot, fig_index):
 		'''saves a bar plot of the number of students who took the SAT by school'''
 
-		#get data for the number of test takers
-		data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Number of SAT Test Takers'].dropna()
+		#get data for the number of test takers, dropping rows with missing data
+		data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in schools_to_plot])][['school_name','Number of SAT Test Takers']].dropna()
 
 		#don't do bar plot if there is only one school
 		if len(data)<=1:
@@ -167,12 +165,12 @@ class GraphGenerator(object):
 		#set size of figure
 		plt.figure(figsize=(self.page_width*.8,self.page_height*.6))
 
-		plt.bar(np.arange(len(data)),data,align='center')
+		plt.bar(np.arange(len(data)),data['Number of SAT Test Takers'],align='center')
 
 		#set labels, titles, and ticks with school names
 		plt.xlabel('Schools')
 		plt.ylabel('Number of Students')
-		plt.xticks(np.arange(len(data)), self.names,fontsize=8)
+		plt.xticks(np.arange(len(data)), data['school_name'].tolist(),fontsize=8)
 		plt.xticks(rotation=90)
 		plt.title('Number of SAT Test Takers by School')
 
@@ -194,12 +192,11 @@ class GraphGenerator(object):
 	def create_regents_bar_plot(self, schools_to_plot, fig_index):
 		'''Saves a bar plot of the percent of students that passed the Regents exam in June and August'''
 
-		#get Regents data for each month
-		june_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - June'].dropna()
-		august_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Regents Pass Rate - August'].dropna()
+		#get Regents data for both months, dropping rows with both months missing
+		data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in schools_to_plot])][['school_name','Regents Pass Rate - June','Regents Pass Rate - August']].dropna(thresh=2)
 
 		#don't do bar plot if there is only one school
-		if len(june_data)<=1:
+		if len(data)<=1:
 			return None
 
 		#set size of figure
@@ -207,14 +204,14 @@ class GraphGenerator(object):
 
 		#create a bar for each month
 		bar_width = 0.35
-		rects1 = plt.bar(np.arange(len(june_data)), june_data, bar_width,color='b',label='June')
-		rects2 = plt.bar(np.arange(len(august_data))+bar_width, august_data, bar_width,color='r',label='August')
+		rects1 = plt.bar(np.arange(len(data)), data['Regents Pass Rate - June'], bar_width,color='b',label='June')
+		rects2 = plt.bar(np.arange(len(data))+bar_width, data['Regents Pass Rate - August'], bar_width,color='r',label='August')
 
 		#set labels, titles, and ticks with school names
 		plt.xlabel('Schools')
 		plt.ylabel('Regents Pass Rate (%)')
 		plt.title('Regents Pass Rate by School')
-		plt.xticks(np.arange(len(june_data)) + bar_width, self.names,fontsize=8)
+		plt.xticks(np.arange(len(data)) + bar_width, data['school_name'].tolist(),fontsize=8)
 		plt.xticks(rotation=90)
 
 		#catches user warning rather than printing it
@@ -246,23 +243,11 @@ class GraphGenerator(object):
 
 		#make bar plot for each year
 		for year in years:
-			#get the student rates for each category
-			ontrack_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Graduation Ontrack Rate - '+year]
-			graduation_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Graduation Rate - '+year]
-			college_data = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['College Career Rate - '+year]
+			#get the student rates for all 3 categories, dropping the rows which have missing data for all 3 categories
+			data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in schools_to_plot])][['school_name','Graduation Ontrack Rate - '+year,'Graduation Rate - '+year,'College Career Rate - '+year]].dropna(thresh=2)
 
-			#drop schools that have any of the the three rates missing
-			rows_to_drop=[]
-			for i in range (0,len(schools_to_plot)):
-				if np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]) or np.isnan(college_data.iloc[i]):
-					row_index = ontrack_data.index.values[i]
-					rows_to_drop.append(row_index)
-			ontrack_data = ontrack_data.drop(rows_to_drop)
-			graduation_data = graduation_data.drop(rows_to_drop)
-			college_data = college_data.drop(rows_to_drop)
-
-			#if there is one school or less for each category, don't do the bar plot
-			if len(ontrack_data)<=1 and len(graduation_data)<=1 and len(college_data)<=1:
+			#if there is one school or less, don't do the bar plot
+			if len(data)<=1:
 				pass
 
 			else:
@@ -274,15 +259,15 @@ class GraphGenerator(object):
 
 				#create a bar for each category
 				bar_width = 0.2
-				rects1 = plt.bar(np.arange(len(ontrack_data)), ontrack_data, bar_width,color='b',label='Ontrack')
-				rects2 = plt.bar(np.arange(len(graduation_data))+bar_width, graduation_data, bar_width,color='r',label='Graduation')
-				rects3 = plt.bar(np.arange(len(college_data))+2*bar_width, college_data, bar_width,color='g',label='College')
+				rects1 = plt.bar(np.arange(len(data)), data['Graduation Ontrack Rate - '+year], bar_width,color='b',label='Ontrack')
+				rects2 = plt.bar(np.arange(len(data))+bar_width, data['Graduation Rate - '+year], bar_width,color='r',label='Graduation')
+				rects3 = plt.bar(np.arange(len(data))+2*bar_width, data['College Career Rate - '+year], bar_width,color='g',label='College')
 
 				#set labels, titles, and ticks with school names
 				plt.xlabel('Schools')
 				plt.ylabel('Rate (%)')
 				plt.title('Graduation and College Rates by School in '+year)
-				plt.xticks(np.arange(len(graduation_data)) + 1.5*bar_width, self.names,fontsize=8)
+				plt.xticks(np.arange(len(data)) + 1.5*bar_width, data['school_name'].tolist(),fontsize=8)
 				plt.xticks(rotation=90)
 
 				#catches user warning rather than printing it
@@ -307,21 +292,11 @@ class GraphGenerator(object):
 	def create_student_satisfaction_bar_plots(self, schools_to_plot, fig_index):
 		'''saves a bar plot of the student satisfaction scores by school'''
 
-		#get Regents data for each month
-		data_2012 = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Student Satisfaction Rate - 2012']
-		data_2013 = self.school_database.loc[self.school_database['school_name'].isin(schools_to_plot)]['Student Satisfaction Rate - 2013']
+		#get get student satisfaction rates for both years, dropping rows with both years missing
+		data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in schools_to_plot])][['school_name','Student Satisfaction Rate - 2012','Student Satisfaction Rate - 2013']].dropna(thresh=2)
 
-		#drop schools that have any of the the two years missing
-		rows_to_drop=[]
-		for i in range (0,len(schools_to_plot)):
-			if np.isnan(data_2012.iloc[i]) or np.isnan(data_2013.iloc[i]):
-				row_index = data_2012.index.values[i]
-				rows_to_drop.append(row_index)
-		data_2012 = data_2012.drop(rows_to_drop)
-		data_2013 = data_2013.drop(rows_to_drop)
-
-		#if there is one school or less for each year, don't do the bar plot
-		if len(data_2012)<=1 and len(data_2013)<=1:
+		#if there is one school or less, don't do the bar plot
+		if len(data)<=1: 
 			return None
 
 		#set size of figure
@@ -329,14 +304,14 @@ class GraphGenerator(object):
 
 		#create a bar for each month
 		bar_width = 0.35
-		rects1 = plt.bar(np.arange(len(data_2012)), data_2012, bar_width,color='b',label='2012')
-		rects2 = plt.bar(np.arange(len(data_2013))+bar_width, data_2013, bar_width,color='r',label='2013')
+		rects1 = plt.bar(np.arange(len(data)), data['Student Satisfaction Rate - 2012'], bar_width,color='b',label='2012')
+		rects2 = plt.bar(np.arange(len(data))+bar_width, data['Student Satisfaction Rate - 2013'], bar_width,color='r',label='2013')
 
 		#set labels, titles, and ticks with school names
 		plt.xlabel('Schools')
 		plt.ylabel('Satisfaction (out of 10)')
 		plt.title('Student Satisfaction by School')
-		plt.xticks(np.arange(len(data_2012)) + bar_width, self.names,fontsize=8)
+		plt.xticks(np.arange(len(data)) + bar_width, data['school_name'].tolist(),fontsize=8)
 		plt.xticks(rotation=90)
 
 		#catches user warning rather than printing it
@@ -366,7 +341,7 @@ class GraphGenerator(object):
 
 		#append data from each section of the SAT
 		for section in sections:
-			section_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['SAT '+section+' Avg']
+			section_data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in self.names])]['SAT '+section+' Avg']
 
 			#don't create boxplot if there are less than 5 data points
 			if len(section_data.dropna()) < 5:
@@ -402,7 +377,7 @@ class GraphGenerator(object):
 		'''saves a histogram showing the distribution of the number of SAT test takers'''
 		
 		#get data for the number of test takers
-		data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Number of SAT Test Takers']
+		data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in self.names])]['Number of SAT Test Takers']
 		data = data.reset_index(drop=True)
 
 		#don't create histogram if there is less than 1 data point
@@ -439,7 +414,7 @@ class GraphGenerator(object):
 
 		#append data from each month of the Regents data
 		for month in months:
-			month_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Regents Pass Rate - '+month]
+			month_data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in self.names])]['Regents Pass Rate - '+month]
 			
 			#don't create boxplot if there are less than 5 data points
 			if len(month_data.dropna()) < 5:
@@ -484,7 +459,7 @@ class GraphGenerator(object):
 		#append data from each category and year
 		for category in categories:
 			for year in years:
-				category_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)][category + ' Rate - ' + year]
+				category_data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in self.names])][category + ' Rate - ' + year]
 				
 				#if there is enough data for at least one type of boxplot, the entire group of plots is valid
 				data_copy = category_data.copy()
@@ -539,7 +514,7 @@ class GraphGenerator(object):
 
 		#append data from each month of the Regents data
 		for year in years:
-			year_data = self.school_database.loc[self.school_database['school_name'].isin(self.names)]['Student Satisfaction Rate - '+year]
+			year_data = self.school_database.loc[self.school_database['school_name'].str.lower().isin([school.lower() for school in self.names])]['Student Satisfaction Rate - '+year]
 			
 			##if there is enough data for at least one year's boxplot, the entire group of plots is valid
 			data_copy = year_data.copy()
