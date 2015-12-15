@@ -54,7 +54,10 @@ class GraphGenerator(object):
 	def clear_plots_directory(self):
 		'''Deletes the plots directory as well as its contents.'''
 
-		shutil.rmtree(self.plots_dir)
+		try:
+			shutil.rmtree(self.plots_dir)
+		except OSError: #catch exception if directory doesn't exist
+			pass
 
 	def get_distribution_plots(self):
 
