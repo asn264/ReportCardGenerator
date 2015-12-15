@@ -77,7 +77,7 @@ class Location_Toolkit(object):
 	def prompt_for_location():
 		'''Asks the user to provide a location'''
 
-		return raw_input("\nEnter an address or a set of coordinates. If needed, see school_directory.csv for reference.")
+		return raw_input("\nEnter an address or a set of coordinates. If needed, see school_directory.csv for reference. ")
 
 
 	def validate_location(self,input):

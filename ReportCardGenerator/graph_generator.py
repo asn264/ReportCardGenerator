@@ -184,7 +184,7 @@ class GraphGenerator(object):
 
 		#save plot
 		filename = 'sat_test_takers_barplot' + str(fig_index)
-		plt.savefig('Plots/' + filename +'.png', bbox_inches='tight')
+		plt.savefig('plots/' + filename +'.png', bbox_inches='tight')
 
 		#close plot to free up memory
 		plt.close()
