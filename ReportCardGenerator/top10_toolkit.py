@@ -82,6 +82,7 @@ class Top10_Toolkit(object):
 
 			return [feature,int(weight)]
 
+
 	def get_features(self):
 		'''creates a list of valid features and valid weights by prompting the user for them and validating them'''
 
@@ -106,6 +107,7 @@ class Top10_Toolkit(object):
 
 		return features,weights
 
+
 	def get_top10_schools(self):
 		'''gets valid features and weights from the user and then finds the 10 schools with the highest score
 		with respect to the features and weights given. A list of the 10 school objects is returned'''
@@ -123,27 +125,36 @@ class Top10_Toolkit(object):
 
 		return schools,[features,weights,scores]
 
-	def calculate_top10(self,features,weights):
-		'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
 
-		#create local copy of our database
+	def calculate_top10(self, features, weights):
+
+		#Cast all the features to lower case
+		features = [feature.lower() for feature in features]
+
+		#Divide each weight by the sum of weights and multiply by 100
+		sum_weights = float(sum(weights))
+		weights = [ (weight*100)/sum_weights for weight in weights ]
+
+		#Create local copy of the database
 		database_copy = self.school_database.copy()
 
-		#normalize data
-		database_copy[self.valid_features] = database_copy[self.valid_features].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
+		#Change column names to lowercase
+		database_copy.columns = map(str.lower, database_copy.columns)
 
-		#change column names to lowercase
-		database_copy.columns = [x.lower() for x in database_copy.columns]
+		#Normalize data on the features
+		database_copy[features] = database_copy[features].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
 
-		#compute score of each school
-		database_copy['score']=0
-		for i in range(0,len(features)):
-			database_copy['score']+=database_copy[features[i].lower()]*weights[i]
+		#Multiply each feature column by the normalized weight for that column
+		database_copy[features] = database_copy[features].mul(weights, axis='columns')
 
-		#sort by score
-		database_copy.sort('score',ascending=False,inplace=True)
+		#To compute the score of each school, add a new column equal to the row-wise sum of the multiplied feature columns
+		database_copy['score'] = database_copy[features].sum(axis=1)
 
-		#return the names and scores of the top 10 schools
-		return database_copy['school_name'][:10].tolist(),database_copy['score'][:10].tolist()
+		#Sort by score
+		database_copy.sort('score', ascending=False, inplace=True)
+
+		#Return the naems and scores of the top 10 schools
+		return database_copy['school_name'][:10].tolist(), database_copy['score'][:10].tolist()
+
 
 
