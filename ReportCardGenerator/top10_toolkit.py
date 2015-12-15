@@ -127,6 +127,7 @@ class Top10_Toolkit(object):
 
 
 	def calculate_top10(self, features, weights):
+		'''calculates the top 10 schools based on the input features and weights. returns a list of the 10 school names'''
 
 		#Cast all the features to lower case
 		features = [feature.lower() for feature in features]
@@ -153,8 +154,9 @@ class Top10_Toolkit(object):
 		#Sort by score
 		database_copy.sort('score', ascending=False, inplace=True)
 
-		#Return the naems and scores of the top 10 schools
+		#drop schools with NaN score
+		database_copy = database_copy[['school_name','score']].dropna()
+
+		#Return the names and scores of the top 10 schools
 		return database_copy['school_name'][:10].tolist(), database_copy['score'][:10].tolist()
-
-
 
