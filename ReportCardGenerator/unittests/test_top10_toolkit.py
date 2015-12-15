@@ -1,3 +1,9 @@
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+
+These tests are intended to ensure that the program only accepts valid features in top10 mode. 
+'''
+
 from unittest import TestCase
 
 from top10_toolkit import *

@@ -1,3 +1,10 @@
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+
+These tests ensure that the program ignores case when accepting valid user input, 
+that the program rejects invalid choices of user input, and that the program quits correctly.
+'''
+
 from unittest import TestCase
 from mode import *
 

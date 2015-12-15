@@ -1,5 +1,14 @@
-from unittest import TestCase
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
 
+These unittests are intended to test the following functionalities in location mode:
+- that validate_location appropriately handles non-existent locations and locations in the wrong city
+- that the user-provided radius is a positive integer or float
+- that the user-provided number of schools to use in the report is a positive integer below the provided upper bound
+
+'''
+
+from unittest import TestCase
 from location_toolkit import *
 from utilities import *
 

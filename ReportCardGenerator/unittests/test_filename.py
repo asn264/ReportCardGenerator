@@ -1,3 +1,11 @@
+'''
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+
+This class tests the functionality of the filename module. 
+It mainly ensures that existing files in the reports directory are recognized by the program, 
+and that the program only validates user input meeting our requirements.
+'''
+
 from unittest import TestCase
 from filename import *
 

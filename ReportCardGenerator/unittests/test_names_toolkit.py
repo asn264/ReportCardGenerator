@@ -1,3 +1,15 @@
+'''
+
+Authors: Aditi Nair (asn264) and Akash Shah (ass502)
+
+These tests ensure that the program validates school names correctly in names mode, and that
+the program interacts with the user correctly when allowing the user to bypass invalid names. 
+
+Because the School class's custom exception was designed to validate input at this stage, 
+the tests in Validate_Names_Test also provide testing for the School class.
+
+'''
+
 from unittest import TestCase
 
 from names_toolkit import *
